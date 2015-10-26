@@ -1,0 +1,111 @@
+<template name="UserSettingsProfile">
+	<div class="container">
+		<div id="page_menu" class="pull-right">
+		</div>
+	</div>
+	{{> UserSettingsProfileEditForm}}
+</template>
+
+<template name="UserSettingsProfileEditForm">
+	<div id="user-settings-profile-edit-form" class="container ">
+		<h4>
+			Edit your profile
+		</h4>
+		<form class="form form_UserSettingsProfileEditForm" role="form">
+			{{#if errorMessage}}
+			<div class="alert alert-warning">
+				{{errorMessage}}
+			</div>
+			{{/if}}		
+		
+			{{#if infoMessage}}
+			<div class="alert alert-success">
+				{{infoMessage}}
+			</div>
+			{{/if}}
+			<div class="form-group  field-profile-name">
+				<div class="input-field col s12">
+					<input type="text" name="profile.name" value="{{current_user_data.profile.name}}" class="form-control" autofocus="autofocus" required="required" data-type="string">
+					<label class="{{#if current_user_data.profile.name}}active{{/if}}" for="profile.name">
+						Name
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group  field-profile-email">
+				<div class="input-field col s12">
+					<input type="text" name="profile.email" value="{{current_user_data.profile.email}}" class="form-control" required="required" data-type="email">
+					<label class="{{#if current_user_data.profile.email}}active{{/if}}" for="profile.email">
+						E-mail
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group  field-profile-facebook">
+				<div class="input-field col s12">
+					<input type="text" name="profile.facebook" value="{{current_user_data.profile.facebook}}" class="form-control" data-type="string">
+					<label class="{{#if current_user_data.profile.facebook}}active{{/if}}" for="profile.facebook">
+						Facebook URL
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group  field-profile-google">
+				<div class="input-field col s12">
+					<input type="text" name="profile.google" value="{{current_user_data.profile.google}}" class="form-control" data-type="string">
+					<label class="{{#if current_user_data.profile.google}}active{{/if}}" for="profile.google">
+						Google+ URL
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group  field-profile-twitter">
+				<div class="input-field col s12">
+					<input type="text" name="profile.twitter" value="{{current_user_data.profile.twitter}}" class="form-control" data-type="string">
+					<label class="{{#if current_user_data.profile.twitter}}active{{/if}}" for="profile.twitter">
+						Twitter ID
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group  field-profile-website">
+				<div class="input-field col s12">
+					<input type="text" name="profile.website" value="{{current_user_data.profile.website}}" class="form-control" data-type="string">
+					<label class="{{#if current_user_data.profile.website}}active{{/if}}" for="profile.website">
+						Website URL
+					</label>
+				</div>
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div>
+				<div class="input-field col s12 submit-div">
+					<button id="form-submit-button" class="btn waves-effect waves-light" type="submit">
+						<i class="material-icons right">
+							check
+						</i>
+						Save
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</template>
+

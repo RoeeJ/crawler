@@ -1,0 +1,46 @@
+<template name="Login">
+	<div class="row">
+		<div class="container">
+			<form id="login_form" class="form" role="form">
+				<h2>
+					Please sign in
+				</h2>
+				{{#if errorMessage}}
+				<div class="alert alert-warning">
+					{{errorMessage}}
+				</div>
+				{{/if}}
+				<div class="input-field col s12">
+					<input id="login_email" type="text" required autofocus>
+					<label for="login_password">
+						Email address
+					</label>
+				</div>
+				<div class="input-field col s12">
+					<input id="login_password" type="password" required>
+					<label for="login_password">
+						Password
+					</label>
+				</div>
+				<div class="field">
+					<button class="btn" type="submit" data-loading-text="Please wait...">
+						Sign in
+					</button>
+				</div>
+				<p class="account-form-text-after" id="register-link">
+					Not a member?
+					<a href="{{pathFor 'register'}}">
+						Sign up here
+					</a>
+				</p>
+				<p class="account-form-text-after" id="forgot-password-link">
+					Forgot password?
+					<a href="{{pathFor 'forgot_password'}}">
+						Click here
+					</a>
+				</p>
+			</form>
+		</div>
+	</div>
+</template>
+

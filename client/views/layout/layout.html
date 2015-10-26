@@ -1,0 +1,142 @@
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Crawler
+	</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<template name="layout">
+	{{#if currentUser}}
+		{{> PrivateLayout}}
+	{{else}}
+		{{> PublicLayout}}
+	{{/if}}
+</template>
+
+<template name="FreeLayout">
+	<div id="content" class="sticky-wrapper">
+		<nav>
+			<a href="#!" class="brand-logo center">
+				Crawler
+			</a>
+			<div id="menu" class="nav-wrapper">
+			</div>
+		</nav>
+		{{> yield}}
+	</div>
+	<div id="footer" class="sticky-footer">
+	</div>
+</template>
+
+<template name="PublicLayout">
+	<div id="content" class="sticky-wrapper">
+		<nav>
+			<a href="#!" class="brand-logo center">
+				Crawler
+			</a>
+			<div id="menu" class="nav-wrapper navbar-inverse navbar-fixed-top">
+				{{> PublicLayoutLeftMenu}}{{> PublicLayoutRightMenu}}
+			</div>
+		</nav>
+		<div class="navbar-spacer">
+		</div>
+		{{> yield}}
+	</div>
+	<div id="footer" class="sticky-footer">
+	</div>
+</template>
+
+<template name="PublicLayoutLeftMenu">
+	<ul id="menu-items" class="nav navbar-nav">
+		<li id="menu-item-simple">
+			<a class="{{menuItemClass 'home_public'}}" href="{{pathFor 'home_public'}}">
+				<i class="material-icons left">
+				</i>
+				Home
+			</a>
+		</li>
+	</ul>
+</template>
+
+<template name="PublicLayoutRightMenu">
+	<ul id="menu-items" class="nav navbar-nav navbar-right">
+		<li id="menu-item-simple">
+			<a class="{{menuItemClass 'register'}}" href="{{pathFor 'register'}}">
+				<i class="material-icons left">
+				</i>
+				Register
+			</a>
+		</li>
+		<li id="menu-item-simple">
+			<a class="{{menuItemClass 'login'}}" href="{{pathFor 'login'}}">
+				<i class="material-icons left">
+				</i>
+				Login
+			</a>
+		</li>
+	</ul>
+</template>
+
+<template name="PrivateLayout">
+	<div id="content" class="sticky-wrapper">
+		<nav>
+			<a href="#!" class="brand-logo center">
+				Crawler
+			</a>
+			<div id="menu" class="nav-wrapper navbar-default navbar-fixed-top">
+				{{> PrivateLayoutLeftMenu}}{{> PrivateLayoutRightMenu}}
+			</div>
+		</nav>
+		<div class="navbar-spacer">
+		</div>
+		{{> yield}}
+	</div>
+	<div id="footer" class="sticky-footer">
+	</div>
+</template>
+
+<template name="PrivateLayoutLeftMenu">
+	<ul id="menu-items" class="nav navbar-nav">
+		<li id="menu-item-simple">
+			<a class="{{menuItemClass 'home_private'}}" href="{{pathFor 'home_private'}}">
+				<i class="material-icons left">
+				</i>
+				Home
+			</a>
+		</li>
+	</ul>
+</template>
+
+<template name="PrivateLayoutRightMenu">
+	<ul id="menu-items" class="nav navbar-nav navbar-right">
+		<li id="menu-item-dropdown" class="">
+			<li>
+				<a class="dropdown-button" href="#!" data-activates="menu-dropdown">
+					{{userEmail}}
+					<i class="material-icons right">
+						arrow_drop_down
+					</i>
+				</a>
+			</li>
+			<div id="menu-dropdown" class="dropdown-content">
+				<ul id="menu-items">
+					<li>
+						<a class="{{menuItemClass 'user_settings'}}" href="{{pathFor 'user_settings'}}">
+							<i class="material-icons left">
+							</i>
+							Settings
+						</a>
+					</li>
+					<li>
+						<a class="{{menuItemClass 'logout'}}" href="{{pathFor 'logout'}}">
+							<i class="material-icons left">
+							</i>
+							Logout
+						</a>
+					</li>
+				</ul>
+			</div>
+		</li>
+	</ul>
+</template>
+
