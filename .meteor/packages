@@ -34,3 +34,8 @@ reactive-dict
 accounts-password
 mrt:moment
 rajit:bootstrap3-datepicker
+gadicohen:phantomjs
+meteorhacks:npm
+
+
+npm-container

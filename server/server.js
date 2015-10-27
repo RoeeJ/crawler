@@ -9,7 +9,9 @@ Meteor.startup(function() {
 			process.env[variableName] = Meteor.settings.env[variableName];
 		}
 	}
-
+    if(!Crawler.state) {
+        console.info(Crawler.init());
+    }
 	//
 	// Setup OAuth login service configuration (read from Meteor.settings)
 	//
