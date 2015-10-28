@@ -10,7 +10,7 @@ Meteor.startup(function() {
 		}
 	}
     if(!Crawler.state) {
-        console.info(Crawler.init());
+    	Crawler.emit('init');
     }
 	//
 	// Setup OAuth login service configuration (read from Meteor.settings)
