@@ -1,27 +1,34 @@
-this.megawin = undefined;
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var VidToMe = new _Crawler();
-VidToMe.process = function(url) {
+var self = this;
+VidToMe.on('processURL',function(doc) {
+	var url = doc.link;
 	var horseman = Horseman({
 		webSecurity: false
 	});
 	horseman
 	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
-	.open('http://vidspot.net/embed-c1zgdrjxi1n1.html')
-	.waitFor(function(){
-		return !!jwplayer().getPlaylistItem();
-	},true)
+	.open(url)
 	.evaluate(function(){
-		return jwplayer().getPlaylistItem();
+		$('#btn_download').attr('disabled',null)
 	})
-	.then(function(ret){
-		console.log(ret);
+	.click('#btn_download')
+	.waitForNextPage()
+	.html()
+	.then(function(html) {
+		console.log(html);
+		//var link = html.match('http://\\d{2,3}\\.+\\d{2,3}.+mp4');
+		//console.log(link);
+		/*Crawler.emit('addDownload',{
+			providerId: self.id,
+			link: link[link.length-1]
+		});*/
 	})
-	.screenshot('/Users/cipher/Developer/Meteor/wat.png')
 	.close();
-}
+});
 VidToMe.matcher = function(url) {
-    return url.toLowerCase().indexOf('vidspot.net') > -1;
+    return url.toLowerCase().indexOf('vidto.me') > -1;
 }
+VidToMe.id = 'vidtome';
 Crawler.emit('addProvider', VidToMe);

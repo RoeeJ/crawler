@@ -11,10 +11,3 @@ this.Downloads.userCanUpdate = function(userId, doc) {
 this.Downloads.userCanRemove = function(userId, doc) {
 	return true;
 }
-
-this.Schemas = this.Schemas || {};
-
-this.Schemas.Downloads = new SimpleSchema({
-});
-
-this.Downloads.attachSchema(this.Schemas.Downloads);

@@ -1,4 +1,5 @@
 {
   "phantomjs":"1.9.9",
-  "node-horseman":"2.7.1"
+  "node-horseman":"2.7.1",
+  "mt-downloader": "0.2.11"
 }

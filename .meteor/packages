@@ -37,7 +37,9 @@ rajit:bootstrap3-datepicker
 meteorhacks:npm
 
 
-npm-container
 ldk:casperjs
 check
 gadicohen:phantomjs
+
+
+npm-container
