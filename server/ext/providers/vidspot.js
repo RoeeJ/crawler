@@ -11,10 +11,13 @@ VidSpot.on('processURL',function(doc) {
 	.open(url)
 	.html()
 	.then(function(html) {
-		var link = html.match(new RegExp('\\w\\d{4}.+\\.mp4\\?v2','g'));
+		var links = html.match(new RegExp('https{0,1}://\\w\\d{4}.+\\.mp4\\?v2','g'));
+		var link = links[links.length-1];
+		var filename = link.substring(link.lastIndexOf('/')+1).replace('?v2','')
 		Crawler.emit('addDownload',{
-			providerId: doc.id,
-			link: link[link.length-1]
+			providerId: self.id,
+			link: link,
+			filename: filename
 		});
 	})
 	.close();

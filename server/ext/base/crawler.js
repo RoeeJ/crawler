@@ -17,12 +17,13 @@ _Crawler = function() {
     });
 
     this.on('addDownload', function(doc) {
-        console.log(doc);
         check(doc,Object);
         var url = doc.link;
         check(url, String);
+        var filename = doc.filename;
+        check(filename, String);
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var dl = new mtd('/Users/cipher/Developer/Meteor/test.mp4',url, {
+        var dl = new mtd('/Users/cipher/Developer/Meteor/'+filename,url, {
             count: 1,
             headers: {other: 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56'},
             onStart: function(meta) {
@@ -32,8 +33,7 @@ _Crawler = function() {
                 if(err) {
                     console.error(err);
                 } else {
-                    console.info('dl completed!');
-                    console.log(res);
+                    //update Downloads collection
                 }
             }
         });
@@ -41,17 +41,24 @@ _Crawler = function() {
     })
 
     this.on('addProvider', function(provider) {
+        //null check
         if(!provider) {
             throw new Error('provider cannot be undefined/null!');
         }
+        //make sure the provider has a handler on the 'processURL' event
         assert(provider.listeners('processURL').length > 0, true)
+        //matcher function
         check(provider.matcher, Function);
+        //id check
         check(provider.id,String);
+
         if(!self.providers) {
             self.providers = {};
         }
-        self.providers[provider.id] = provider;
-        console.log('provider added!')
+        //make sure we don't have a duplicate provider
+        if(!self.providers[provider.id]){
+            self.providers[provider.id] = provider;
+        }
     });
     this.on('addLink', function(url) {
         var pf = false
