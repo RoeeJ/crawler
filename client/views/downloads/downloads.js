@@ -17,11 +17,11 @@ Template.downloads.helpers({
   },
   getState: function(state) {
     if(state == 2) {
-      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">thumb_up</i></a>';
+      return '<a href="#!" class=" inactiveLink"><i class="material-icons">thumb_up</i></a>';
     } else if(state == 1) {
-      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">dns</i></a>';
+      return '<a href="#!" class=" inactiveLink"><i class="material-icons">dns</i></a>';
     } else if(state < 0) {
-      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">thumb_down</i></a>';
+      return '<a href="#!" class=" inactiveLink"><i class="material-icons">thumb_down</i></a>';
     }
   },
   getStateColor: function(state) {

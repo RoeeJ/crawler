@@ -23,7 +23,10 @@
             {{else}}
             {{/if}}
           </p>
-          {{{getState state}}}
+          <div class="secondary-content">
+            {{{getState state}}}
+            <a href="#!" class="delBtn"><i class="material-icons">delete</i></a>
+          </div>
         </li>
         {{/each}}
     </ul>
@@ -33,7 +36,7 @@
   {{#modalizeBody}}
     <h4>Delete download</h4>
     <p>Are you sure you want to delete this download?</p>
-    <p>This is unreverseable!</p>
+    <p>This is irreverseable!</p>
   {{/modalizeBody}}
   {{#modalizeFooter}}
     <button data-modalize-close class="waves-effect waves-red btn-flat">No</button>

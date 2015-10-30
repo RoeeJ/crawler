@@ -2,7 +2,7 @@ var util = Meteor.npmRequire('util');
 var EventEmitter = Meteor.npmRequire('events').EventEmitter;
 var assert = Meteor.npmRequire('assert');
 var Fiber = Meteor.npmRequire('fibers');
-var parse = Meteor.npmRequire('url-parse');
+var URL = Meteor.npmRequire('url');
 var fs = Meteor.npmRequire('fs');
 var request = Meteor.npmRequire('request');
 var progress = Meteor.npmRequire('request-progress');
@@ -22,18 +22,13 @@ _Crawler = function() {
     this.on('addDownload', function(doc) {
         check(doc,Object);
         var url = doc.link;
-        var purl = parse(url);
-        var port = undefined;
-        if(purl.port != '') {
-            port = purl.port;
-        }
         check(url, String);
-        var port = parse(url).port
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var filepath = '/Users/cipher/Developer/Meteor/'+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,15)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
-        progress(request(url.replace(port != '' ? ':'+port : '','')).on('response', function(){
+        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,15)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        progress(request({uri:URL.parse(url)}).on('response', function(res){
             Fiber(function(){
                 doc.state = 1;
+                doc.path = filepath;
                 doc.docId = Downloads.insert(doc);
               }).run();
         })
@@ -49,14 +44,14 @@ _Crawler = function() {
             Fiber(function(){
                 Downloads.update(doc.docId,{$set:{progress:state.percent}})
             }).run();
-        }).pipe(fs.createWriteStream(filepath))
+        })
         .on('close',function(err){
             if(!err) {
                 Fiber(function(){
                 Downloads.update(doc.docId,{$set:{state:2,progress:'finished!'}})
                 }).run();
             }
-        });
+        }).pipe(fs.createWriteStream(filepath));
     })
 
     this.on('addProvider', function(provider) {

@@ -1,5 +1,6 @@
 .inline {
   display: inline;
+  margin-right: 5px;
 }
 .inactiveLink {
    text-decoration: none;

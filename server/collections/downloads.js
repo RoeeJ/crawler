@@ -11,3 +11,11 @@ Downloads.allow({
 		return true;
 	}
 });
+Downloads.after.remove(function(userId, doc){
+	if(doc.path) {
+		var fs = Meteor.npmRequire('fs');
+		if(fs.existsSync(doc.path)){
+			fs.unlinkSync(doc.path);
+		}
+	}
+});
