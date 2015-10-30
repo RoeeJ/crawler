@@ -2,9 +2,9 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var request = Meteor.npmRequire('sync-request');
-var Novamov = new _Crawler();
-var self = Novamov;
-Novamov.on('processURL',function(doc) {
+var MultiLazy = new _Crawler();
+var self = MultiLazy;
+MultiLazy.on('processURL',function(doc) {
 	var _url = doc.link;
 	var horseman = Horseman({
 		webSecurity: false
@@ -27,7 +27,7 @@ Novamov.on('processURL',function(doc) {
 			var title = body.match('title=([^&]+)')[1];
 			var filename = url.substring(url.lastIndexOf('/')+1);
 			Crawler.emit('addDownload',{
-				providerId: Novamov.id,
+				providerId: MultiLazy.id,
 				link: url,
 				filename: filename,
 				title: title
@@ -38,7 +38,7 @@ Novamov.on('processURL',function(doc) {
 	})
 	.close();
 });
-Novamov.matcher = function(url) {
+MultiLazy.matcher = function(url) {
 		var lazy_faggots = [
 			'movshare',
 			'videoweed',
@@ -47,11 +47,11 @@ Novamov.matcher = function(url) {
 			'novamov'
 		];
     for(var i=0;i<lazy_faggots.length;i++){
-			if(url.indexOf(lazy_faggots[i]) > -1) {
+			if(url.toLowerCase().indexOf(lazy_faggots[i]) > -1) {
 				return true;
 			}
 		}
 		return false;
 }
-Novamov.id = 'Novamov';
-Crawler.emit('addProvider', Novamov);
+MultiLazy.id = 'MultiLazy';
+Crawler.emit('addProvider', MultiLazy);

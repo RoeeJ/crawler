@@ -7,3 +7,6 @@
    pointer-events: none;
    cursor: default;
 }
+.ui-progres-circle {
+  margin-top: 5px;
+}

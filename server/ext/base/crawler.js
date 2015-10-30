@@ -4,8 +4,8 @@ var assert = Meteor.npmRequire('assert');
 var Fiber = Meteor.npmRequire('fibers');
 var URL = Meteor.npmRequire('url');
 var fs = Meteor.npmRequire('fs');
-var request = Meteor.npmRequire('request');
-var progress = Meteor.npmRequire('request-progress');
+var Downloader = Meteor.npmRequire('mt-files-downloader')
+var downloader = new Downloader();
 _Crawler = function() {
     var self = this;
     EventEmitter.call(self);
@@ -20,41 +20,48 @@ _Crawler = function() {
     });
 
     this.on('addDownload', function(doc) {
-        console.log(doc);
         check(doc,Object);
         var url = doc.link;
         check(url, String);
         assert.equal(url.isURL(),true,'url is not a valid URL!');
         var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,15)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
-        progress(request({uri:URL.parse(url)}).on('response', function(res){
-            Fiber(function(){
-                doc.state = 1;
-                doc.path = filepath;
-                doc.docId = Downloads.insert(doc);
-              }).run();
+        var dl;
+        if(fs.existsSync(filepath)) {
+          dl = downloader.resumeDownload(filepath);
+        } else {
+          dl = downloader.download(url,filepath);
+        }
+        dl.on('start',function(dl){
+          Fiber(function(){
+              doc.state = 1;
+              doc.path = filepath;
+              doc.docId = Downloads.insert(doc);
+            }).run();
         })
         .on('error',function(err){
             Fiber(function(){
                 Downloads.update(doc.docId,{$set:{state:-1, error:err}})
             }).run();
             //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
-        }),{
-            throttle: 1000,
-            delay: 1000
-        }).on('progress',function(state) {
+        })
+        .on('progress',function(prog) {
             Fiber(function(){
-                Downloads.update(doc.docId,{$set:{progress:state.percent}})
+                Downloads.update(doc.docId,{$set:{progress:prog}})
             }).run();
-        }).pipe(fs.createWriteStream(filepath))
-        .on('close',function(err){
-            if(!err) {
-                Fiber(function(){
-                Downloads.update(doc.docId,{$set:{state:2},$unset:{progress:''}});
-                }).run();
-            } else {
-              console.log(err);
-            }
+        })
+        .on('end',function(dl){
+          if(dl.error && dl.error != ''){
+            Downloads.update(doc.docId,{$set:{state:dl.status},$unset:{progress:''}});
+          } else {
+            Fiber(function(){
+            Downloads.update(doc.docId,{$set:{state:2},$unset:{progress:''}});
+            }).run();
+          }
+        })
+        .on('error', function(dl) {
+
         });
+        dl.start();
     })
 
     this.on('addProvider', function(provider) {
