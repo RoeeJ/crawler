@@ -20,6 +20,7 @@ _Crawler = function() {
     });
 
     this.on('addDownload', function(doc) {
+        console.log(doc);
         check(doc,Object);
         var url = doc.link;
         check(url, String);

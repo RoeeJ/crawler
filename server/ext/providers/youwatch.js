@@ -19,7 +19,7 @@ function processOnce(url) {
 	.open(url)
 	.evaluate(function() {
 		return document.documentElement.getElementsByTagName('iframe')[0].contentDocument.getElementsByTagName('script')[16].innerHTML;
-		
+
 	})
 	.then(function(html) {
 		if(!html){
@@ -55,7 +55,7 @@ function processTwice(url) {
 	}, true)
 	.evaluate(function() {
 		return document.documentElement.getElementsByTagName('iframe')[0].contentDocument.getElementsByTagName('script')[16].innerHTML;
-		
+
 	})
 	.then(function(html) {
 		if(!html){
