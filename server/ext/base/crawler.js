@@ -2,9 +2,12 @@ var util = Meteor.npmRequire('util');
 var EventEmitter = Meteor.npmRequire('events').EventEmitter;
 var assert = Meteor.npmRequire('assert');
 var Fiber = Meteor.npmRequire('fibers');
+var parse = Meteor.npmRequire('url-parse');
+var fs = Meteor.npmRequire('fs');
+var request = Meteor.npmRequire('request');
+var progress = Meteor.npmRequire('request-progress');
 _Crawler = function() {
     var self = this;
-    var mtd = Meteor.npmRequire('mt-downloader');
     EventEmitter.call(self);
     var state = -1;
     this.on('init', function() {
@@ -12,32 +15,48 @@ _Crawler = function() {
     self.state = 1;
     self.emit('ready');
     });
-    
+
     this.on('abortDownload',function(id) {
     });
 
     this.on('addDownload', function(doc) {
         check(doc,Object);
         var url = doc.link;
+        var purl = parse(url);
+        var port = undefined;
+        if(purl.port != '') {
+            port = purl.port;
+        }
         check(url, String);
-        var filename = doc.filename;
-        check(filename, String);
+        var port = parse(url).port
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var dl = new mtd('/Users/cipher/Developer/Meteor/'+filename,url, {
-            count: 1,
-            headers: {other: 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56'},
-            onStart: function(meta) {
-
-            },
-            onEnd: function(err, res) {
-                if(err) {
-                    console.error(err);
-                } else {
-                    //update Downloads collection
-                }
+        var filepath = '/Users/cipher/Developer/Meteor/'+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,15)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        progress(request(url.replace(port != '' ? ':'+port : '','')).on('response', function(){
+            Fiber(function(){
+                doc.state = 1;
+                doc.docId = Downloads.insert(doc);
+              }).run();
+        })
+        .on('error',function(err){
+            Fiber(function(){
+                Downloads.update(doc.docId,{$set:{state:-1, error:err}})
+            }).run();
+            //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
+        }),{
+            throttle: 1000,
+            delay: 1000
+        }).on('progress',function(state) {
+            Fiber(function(){
+                Downloads.update(doc.docId,{$set:{progress:state.percent}})
+            }).run();
+        }).pipe(fs.createWriteStream(filepath))
+        .on('close',function(err){
+            if(!err) {
+                Fiber(function(){
+                Downloads.update(doc.docId,{$set:{state:2,progress:'finished!'}})
+                }).run();
             }
         });
-        dl.start();
     })
 
     this.on('addProvider', function(provider) {

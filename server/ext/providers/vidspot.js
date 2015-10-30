@@ -1,6 +1,7 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var VidSpot = new _Crawler();
+var self = VidSpot;
 VidSpot.on('processURL',function(doc) {
 	var url = doc.link;
 	var horseman = Horseman({
@@ -15,7 +16,7 @@ VidSpot.on('processURL',function(doc) {
 		var link = links[links.length-1];
 		var filename = link.substring(link.lastIndexOf('/')+1).replace('?v2','')
 		Crawler.emit('addDownload',{
-			providerId: self.id,
+			providerId: VidSpot.id,
 			link: link,
 			filename: filename
 		});

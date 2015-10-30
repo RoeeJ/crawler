@@ -1,0 +1,49 @@
+<template name="downloads">
+  <div class="container">
+    <div class="row">
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">הוספת הורדה</span>
+              <p></p>
+              <input placeholder="Link" id="linkTxt" type="text" class="validate inline" >
+              <button id="addBtn" class="waves-effect waves-light btn inline" >הוסף</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  <table class="highlight">
+    <thead>
+      <tr>
+        <th data-field="link">Link</th>
+        <th data-field="filename">File name</th>
+        <th data-field="progress">Progress</th>
+        <th data-field="state">State</th>
+        <th data-field="delBtn"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each allDownloads}}
+      <tr>
+      <td>{{{shortenLink link}}}</td>
+      <td>{{filename}}</td>
+      <td>{{progress}}</td>
+      <td>{{state}}</td>
+      <td><a class="waves-effect waves-light btn delBtn" style="height:95%">Delete</a></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+</template>
+<template name="delModal">
+  {{#modalizeBody}}
+    <h4>Delete download</h4>
+    <p>Are you sure you want to delete this download?</p>
+    <p>This is unreverseable!</p>
+  {{/modalizeBody}}
+  {{#modalizeFooter}}
+    <button data-modalize-close class="waves-effect waves-red btn-flat">No</button>
+    <button data-modalize-close class="waves-effect waves-green btn-flat" id="delBtn">Yes</button>
+  {{/modalizeFooter}}
+</template>

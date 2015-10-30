@@ -23,11 +23,11 @@ var privateRoutes = [
 ];
 
 var freeRoutes = [
-	
+
 ];
 
 var roleMap = [
-	
+
 ];
 
 this.firstGrantedRoute = function(preferredRoute) {
@@ -153,7 +153,7 @@ Router.ensureGranted = function() {
 	}
 };
 
-Router.waitOn(function() { 
+Router.waitOn(function() {
 	Meteor.subscribe("current_user_data");
 });
 
@@ -172,7 +172,10 @@ Router.onBeforeAction(Router.ensureLogged, {only: privateRoutes});
 Router.onBeforeAction(Router.ensureGranted, {only: freeRoutes}); // yes, route from free zone can be restricted to specific set of user roles
 
 Router.map(function () {
-	
+
+	this.route("downloads", {
+		path: "/downloads",
+	});
 	this.route("home_public", {path: "/", controller: "HomePublicController"});
 	this.route("login", {path: "/login", controller: "LoginController"});
 	this.route("register", {path: "/register", controller: "RegisterController"});

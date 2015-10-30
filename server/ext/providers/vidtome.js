@@ -1,7 +1,7 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var VidToMe = new _Crawler();
-var self = this;
+var self = VidToMe;
 VidToMe.on('processURL',function(doc) {
 	var url = doc.link;
 	var horseman = Horseman({
@@ -23,7 +23,7 @@ VidToMe.on('processURL',function(doc) {
 		var link = links[links.length-1];
 		var filename = link.substring(link.lastIndexOf('/')+1)
 		Crawler.emit('addDownload',{
-			providerId: self.id,
+			providerId: VidToMe.id,
 			link: link,
 			filename: filename
 		});
