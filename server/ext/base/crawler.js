@@ -44,14 +44,16 @@ _Crawler = function() {
             Fiber(function(){
                 Downloads.update(doc.docId,{$set:{progress:state.percent}})
             }).run();
-        })
+        }).pipe(fs.createWriteStream(filepath))
         .on('close',function(err){
             if(!err) {
                 Fiber(function(){
-                Downloads.update(doc.docId,{$set:{state:2,progress:'finished!'}})
+                Downloads.update(doc.docId,{$set:{state:2},$unset:{progress:''}});
                 }).run();
+            } else {
+              console.log(err);
             }
-        }).pipe(fs.createWriteStream(filepath));
+        });
     })
 
     this.on('addProvider', function(provider) {
