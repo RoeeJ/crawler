@@ -100,6 +100,7 @@ perak:user-roles@1.0.10
 practicalmeteor:chai@1.9.2_3
 practicalmeteor:loglevel@1.1.0_3
 promise@0.5.1
+raix:ui-progress-circle@0.0.3
 rajit:bootstrap3-datepicker@1.4.1
 random@1.0.5
 rate-limit@1.0.0

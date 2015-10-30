@@ -1,0 +1,8 @@
+.inline {
+  display: inline;
+}
+.inactiveLink {
+   text-decoration: none;
+   pointer-events: none;
+   cursor: default;
+}

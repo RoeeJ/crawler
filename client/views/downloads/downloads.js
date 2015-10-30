@@ -5,6 +5,37 @@ Template.downloads.helpers({
   },
   shortenLink: function(link){
     return '<p><abbr title='+link+'>'+link.substring(0,15)+'...</abbr>'
+  },
+  isDownloading: function(){
+    return this.state == 1;
+  },
+  getProgress: function(prog){
+    if(typeof prog === 'number') {
+      Session.set('progressPercent', prog)
+      Session.set('progressText', "we're "+prog+"% there")
+    }
+  },
+  getState: function(state) {
+    if(state == 2) {
+      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">thumb_up</i></a>';
+    } else if(state == 1) {
+      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">dns</i></a>';
+    } else if(state < 0) {
+      return '<a href="#!" class="secondary-content inactiveLink"><i class="material-icons">thumb_down</i></a>';
+    }
+  },
+  getStateColor: function(state) {
+    switch (state) {
+      case 1:
+      return "yellow"
+        break;
+      case 2:
+        return "green"
+        break
+      default:
+        return "red"
+        break;
+    }
   }
 });
 Template.downloads.events({

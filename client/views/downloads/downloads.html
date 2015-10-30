@@ -1,7 +1,7 @@
 <template name="downloads">
   <div class="container">
     <div class="row">
-        <div class="col s12 m6">
+        <div class="col s12">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
               <span class="card-title">הוספת הורדה</span>
@@ -12,28 +12,21 @@
           </div>
         </div>
       </div>
-  <table class="highlight">
-    <thead>
-      <tr>
-        <th data-field="link">Link</th>
-        <th data-field="filename">File name</th>
-        <th data-field="progress">Progress</th>
-        <th data-field="state">State</th>
-        <th data-field="delBtn"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each allDownloads}}
-      <tr>
-      <td>{{{shortenLink link}}}</td>
-      <td>{{filename}}</td>
-      <td>{{progress}}</td>
-      <td>{{state}}</td>
-      <td><a class="waves-effect waves-light btn delBtn" style="height:95%">Delete</a></td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
+      <ul class="collection">
+        {{#each allDownloads}}
+        <li class="collection-item avatar" style="background-color:rgba(0,0,0,0)">
+          <i class="material-icons circle {{getStateColor state}} circle">movie</i>
+          <span class="title">{{{shortenLink link}}}</span>
+          <p>{{filename}} <br>
+            {{#if isDownloading}}
+            {{> progressCircle progress=progress radius="35" class="green"}}
+            {{else}}
+            {{/if}}
+          </p>
+          {{{getState state}}}
+        </li>
+        {{/each}}
+    </ul>
 </div>
 </template>
 <template name="delModal">
