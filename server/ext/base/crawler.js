@@ -24,7 +24,7 @@ _Crawler = function() {
         var url = doc.link;
         check(url, String);
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,15)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,31)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
         var dl;
         if(fs.existsSync(filepath)) {
           dl = downloader.resumeDownload(filepath);
@@ -46,7 +46,7 @@ _Crawler = function() {
         })
         .on('progress',function(prog) {
             Fiber(function(){
-                Downloads.update(doc.docId,{$set:{progress:prog}})
+                Downloads.update(doc.docId,{$set:{progress:prog,speed:dl.stats.present.speed}})
             }).run();
         })
         .on('end',function(dl){

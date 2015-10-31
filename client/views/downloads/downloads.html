@@ -12,6 +12,7 @@
           </div>
         </div>
       </div>
+      {{#if gotDownloads}}
       <ul class="collection">
         {{#each allDownloads}}
         <li class="collection-item avatar" style="background-color:rgba(0,0,0,0)">
@@ -20,6 +21,9 @@
           <p>{{filename}} <br>
             {{#if isDownloading}}
             {{> progressCircle progress=progress radius="35" class="green"}}
+            {{#if speed}}
+            <br> {{getHumanReadableSpeed}}
+            {{/if}}
             {{else}}
             {{/if}}
           </p>
@@ -30,6 +34,8 @@
         </li>
         {{/each}}
     </ul>
+    {{else}}
+    {{/if}}
 </div>
 </template>
 <template name="delModal">
