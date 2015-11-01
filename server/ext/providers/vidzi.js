@@ -14,15 +14,20 @@ Vidzi.on('processURL',function(doc) {
     return document.getElementsByTagName('script')[16].innerHTML
   })
 	.then(function(html) {
-    var fnString = eval(html.replace('eval',''));
-    //return console.log(fnString)
-    var link = fnString.match('file:[^"]*"([^"]+\\.(mp4|mov))"')[1];
-		var filename = link.substring(link.lastIndexOf('/')+1)
-		Crawler.emit('addDownload',{
-			providerId: Vidzi.id,
-			link: link,
-			filename: filename
-		});
+		if(html && html.indexOf('eval') !== -1)
+		{
+			var fnString = eval(html.replace('eval',''));
+	    //return console.log(fnString)
+	    var link = fnString.match('file:[^"]*"([^"]+\\.(mp4|mov))"')[1];
+			var filename = link.substring(link.lastIndexOf('/')+1)
+			Crawler.emit('addDownload',{
+				providerId: Vidzi.id,
+				link: link,
+				filename: filename
+			});
+		} else {
+			console.log(html);
+		}
 	})
 	.close();
 });

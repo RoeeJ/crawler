@@ -17,5 +17,8 @@ Downloads.after.remove(function(userId, doc){
 		if(fs.existsSync(doc.path)){
 			fs.unlinkSync(doc.path);
 		}
+		if(fs.existsSync(doc.path+'.mtd')){
+			fs.unlinkSync(doc.path+'.mtd');
+		}
 	}
 });

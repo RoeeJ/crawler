@@ -90,6 +90,7 @@ msavin:jetsetter@1.4.0
 msavin:mongol@1.5.0
 msolters:modalize@1.0.1
 natestrauser:font-awesome@4.4.0
+nimble:restivus@0.8.4
 npm-bcrypt@0.7.8_2
 npm-container@1.2.0
 npm-mongo@1.4.39_1
@@ -115,6 +116,7 @@ sanjo:meteor-version@1.0.0
 service-configuration@1.0.5
 session@1.1.1
 sha@1.0.4
+simple:json-routes@1.0.4
 spacebars@1.0.7
 spacebars-compiler@1.0.7
 spiderable@1.0.9

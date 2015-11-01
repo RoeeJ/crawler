@@ -17,7 +17,13 @@
         {{#each allDownloads}}
         <li class="collection-item avatar" style="background-color:rgba(0,0,0,0)">
           <i class="material-icons circle {{getStateColor state}} circle">movie</i>
-          <span class="title">{{{shortenLink link}}}</span>
+          <span class="title">
+            {{#unless title}}
+              {{{shortenLink link}}}
+            {{else}}
+              {{title}}
+            {{/unless}}
+            </span>
           <p>{{filename}} <br>
             {{#if isDownloading}}
             {{> progressCircle progress=progress radius="35" class="green"}}

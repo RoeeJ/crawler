@@ -14,12 +14,10 @@ VidSpot.on('processURL',function(doc) {
 	.then(function(html) {
 		var links = html.match(new RegExp('https{0,1}://\\w\\d{4}.+\\.mp4\\?v2','g'));
 		var link = links[links.length-1];
-		var filename = link.substring(link.lastIndexOf('/')+1).replace('?v2','')
-		Crawler.emit('addDownload',{
-			providerId: VidSpot.id,
-			link: link,
-			filename: filename
-		});
+		doc.providerId = VidSpot.id;
+		doc.link = link;
+		doc.filename = link.substring(link.lastIndexOf('/')+1).replace('?v2','');
+		Crawler.emit('addDownload',doc);
 	})
 	.close();
 });

@@ -13,6 +13,7 @@ _Crawler = function() {
     this.on('init', function() {
     //perform initialization, placeholder for now
     self.state = 1;
+    if(!this.providers) this.provides = [];
     self.emit('ready');
     });
 
@@ -24,9 +25,10 @@ _Crawler = function() {
         var url = doc.link;
         check(url, String);
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(url).digest('hex').substring(0,31)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        if(fs.existsSync(filepath)) return;
         var dl;
-        if(fs.existsSync(filepath)) {
+        if(fs.existsSync(filepath+'.mtd')) {
           dl = downloader.resumeDownload(filepath);
         } else {
           dl = downloader.download(url,filepath);
@@ -84,32 +86,26 @@ _Crawler = function() {
             self.providers[provider.id] = provider;
         }
     });
-    this.on('addLink', function(url) {
+    this.on('addLink', function(doc) {
         var pf = false
         _.each(self.providers,function(provider){
-            if(provider.matcher(url)) {
-                provider.emit('processURL',{link:url,id:guid()});
+            if(provider.matcher(doc.link)) {
+                provider.emit('processURL',doc);
                 pf = true;
             }
         }, self);
         if(!pf){console.error('no providers found!')}
     });
-}
-_Crawler.prototype.abort = function(id) {
-    check(id,String);
-    var provider = Downloads.findOne(id).providerId;
-    this.providers[provider].emit('abort',id);
-}
-_Crawler.prototype.providers = [];
-
-_Crawler.prototype.process = function(url) {
-    throw new Error('Must override process');
-}
-_Crawler.prototype.getVideo = function(id) {
-
-}
-_Crawler.prototype.getThumbnail = function(id) {
-
+    this.processSync = function(doc) {
+      var pf;
+      _.each(self.providers,function(provider){
+        if(provider.matcher(doc.link) && !pf) {
+            provider.emit('processURL',doc);
+            pf = true;
+        }
+      });
+      return pf;
+    }
 }
 util.inherits(_Crawler,EventEmitter);
 Crawler = new _Crawler();

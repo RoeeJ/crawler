@@ -68,7 +68,7 @@ Template.downloads.events({
       $('#linkTxt').fadeOut(100,function(){
         $('#linkTxt').val('');
         $('#linkTxt').fadeIn(100, function(){
-          Meteor.call('addLink',link);
+          Meteor.call('addLink',{link:link,client:true});
           Materialize.toast('link added!',2000);
         });
       })

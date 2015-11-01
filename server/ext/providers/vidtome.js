@@ -10,13 +10,12 @@ VidToMe.on('processURL',function(doc) {
 	horseman
 	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
 	.open(url)
-	.screenshot('/Users/cipher/Developer/Meteor/step1.png')
+	.wait(5000)
 	.evaluate(function(){
 		$('#btn_download').attr('disabled',null)
 	})
 	.click('#btn_download')
 	.waitForNextPage()
-	.screenshot('/Users/cipher/Developer/Meteor/step2.png')
 	.html()
 	.then(function(html) {
 		var links = html.match(new RegExp('http:\\/\\/\\d{2,3}\\.+\\d{2,3}.+(mp4|mov)','gi'));
@@ -32,6 +31,8 @@ VidToMe.on('processURL',function(doc) {
 });
 VidToMe.matcher = function(url) {
     return url.toLowerCase().indexOf('vidto.me') > -1;
+		//broken wtf
+		//return false;
 }
 VidToMe.id = 'vidtome';
 Crawler.emit('addProvider', VidToMe);

@@ -1,5 +1,5 @@
 {
-  "ecmaVersion": 6,
+  "ecmaVersion": 5,
   "libs": [
     "browser",
     "jquery"
@@ -8,7 +8,13 @@
     "*.js",
     "*/*.js",
     "*/*/*.js",
-    "*/*/*/*.js",
-    "*/*/*/*/*.js"
-  ]
+    "*/*/*/*.js"
+  ],
+  "dontLoad": [
+    ".meteor"
+  ],
+  "plugins": {
+    "lint": {},
+    "meteor": {}
+  }
 }
