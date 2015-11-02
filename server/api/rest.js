@@ -18,7 +18,7 @@ API.addRoute('getOTL', {}, {
         path: doc.path,
         used: false,
         requestingIP: this.request.connection.remoteAddress
-      })
+      });
       return {
         statusCode: 200,
         body: {
@@ -28,7 +28,7 @@ API.addRoute('getOTL', {}, {
             title: doc.title
           }
         }
-      }
+      };
     }
   }
 });
@@ -44,17 +44,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         };
       }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
-      var ranking = [
-        'vidspot',
-        'youwatch',
-        'thand',
-        'vidto',
-        'movshare',
-        'videoweed',
-        'videowood',
-        'nowvideo',
-        'novamov'
-      ];
+      var ranking = [ 'vidspot', 'youwatch', 'thand', 'vidto', 'movshare', 'videoweed', 'videowood', 'nowvideo', 'novamov' ];
       var pf;
       var doc;
       ranking.forEach(function(site){

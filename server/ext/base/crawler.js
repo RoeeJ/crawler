@@ -72,8 +72,15 @@ _Crawler = function() {
                 Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
             }).run();
         })
-        .on('end',dlStopHandler)
-        .on('error', dlStopHandler);
+        .on('end',function(dl){
+          if(dl.error && dl.error !== ''){
+            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:''}});
+          } else {
+            Fiber(function(){
+            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
+            }).run();
+          }
+        });
         dl.start();
     });
 
