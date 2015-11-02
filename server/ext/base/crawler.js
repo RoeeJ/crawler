@@ -4,8 +4,9 @@ var assert = Meteor.npmRequire('assert');
 var Fiber = Meteor.npmRequire('fibers');
 var URL = Meteor.npmRequire('url');
 var fs = Meteor.npmRequire('fs');
-var Downloader = Meteor.npmRequire('mt-files-downloader')
+var Downloader = Meteor.npmRequire('mt-files-downloader');
 var downloader = new Downloader();
+var downloads = {};
 _Crawler = function() {
     var self = this;
     EventEmitter.call(self);
@@ -18,6 +19,20 @@ _Crawler = function() {
     });
 
     this.on('abortDownload',function(id) {
+      var doc = self.downloads[id].dl;
+      if(doc) {
+        if(doc.dl) {
+          doc.dl.stop();
+        }
+        if(doc.path) {
+        		if(fs.existsSync(doc.path)){
+        			fs.unlinkSync(doc.path);
+        		}
+        		if(fs.existsSync(doc.path+'.mtd')){
+        			fs.unlinkSync(doc.path+'.mtd');
+        		}
+        }
+      }
     });
 
     this.on('addDownload', function(doc) {
@@ -25,7 +40,10 @@ _Crawler = function() {
         var url = doc.link;
         check(url, String);
         assert.equal(url.isURL(),true,'url is not a valid URL!');
-        var filepath = Config.BASE_PATH+ Meteor.npmRequire('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        if(!fs.existsSync(Config.BASE_PATH)) {
+          fs.mkdirSync(Config.BASE_PATH);
+        }
+        var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
         if(fs.existsSync(filepath)) return;
         var dl;
         if(fs.existsSync(filepath+'.mtd')) {
@@ -35,36 +53,29 @@ _Crawler = function() {
         }
         dl.on('start',function(dl){
           Fiber(function(){
-              doc.state = 1;
-              doc.path = filepath;
-              doc.docId = Downloads.insert(doc);
+            var hash = getDocHash(doc);
+            downloads[hash] = doc;
+            downloads[hash].state = 1;
+            downloads[hash].path = filepath;
+            downloads[hash].docId = Downloads.insert(doc);
+            downloads[hash].dl = dl;
             }).run();
         })
         .on('error',function(err){
             Fiber(function(){
-                Downloads.update(doc.docId,{$set:{state:-1, error:err}})
+                Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
             }).run();
             //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
         })
         .on('progress',function(prog) {
             Fiber(function(){
-                Downloads.update(doc.docId,{$set:{progress:prog,speed:dl.stats.present.speed}})
+                Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
             }).run();
         })
-        .on('end',function(dl){
-          if(dl.error && dl.error != ''){
-            Downloads.update(doc.docId,{$set:{state:dl.status},$unset:{progress:''}});
-          } else {
-            Fiber(function(){
-            Downloads.update(doc.docId,{$set:{state:2},$unset:{progress:''}});
-            }).run();
-          }
-        })
-        .on('error', function(dl) {
-
-        });
+        .on('end',dlStopHandler)
+        .on('error', dlStopHandler);
         dl.start();
-    })
+    });
 
     this.on('addProvider', function(provider) {
         //null check
@@ -72,7 +83,7 @@ _Crawler = function() {
             throw new Error('provider cannot be undefined/null!');
         }
         //make sure the provider has a handler on the 'processURL' event
-        assert(provider.listeners('processURL').length > 0, true)
+        assert(provider.listeners('processURL').length > 0, true);
         //matcher function
         check(provider.matcher, Function);
         //id check
@@ -87,14 +98,14 @@ _Crawler = function() {
         }
     });
     this.on('addLink', function(doc) {
-        var pf = false
+        var pf = false;
         _.each(self.providers,function(provider){
             if(provider.matcher(doc.link)) {
                 provider.emit('processURL',doc);
                 pf = true;
             }
         }, self);
-        if(!pf){console.error('no providers found!')}
+        if(!pf){console.error('no providers found!');}
     });
     this.processSync = function(doc) {
       var pf;
@@ -105,8 +116,8 @@ _Crawler = function() {
         }
       });
       return pf;
-    }
-}
+    };
+};
 util.inherits(_Crawler,EventEmitter);
 Crawler = new _Crawler();
 function guid() {
@@ -117,4 +128,7 @@ function guid() {
   }
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
+}
+function getDocHash(doc) {
+  return Meteor.npmRequire('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31);
 }

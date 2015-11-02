@@ -2,7 +2,7 @@ this.App = {};
 this.Helpers = {};
 
 Meteor.startup(function() {
-	
+
 });
 
 App.logout = function() {

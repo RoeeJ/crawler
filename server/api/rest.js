@@ -2,19 +2,47 @@ var request = Meteor.npmRequire('sync-request');
 API = new Restivus({
   prettyJson: true
 });
-API.addRoute('addLink', {authRequired: false}, {
+API.addRoute('getOTL', {}, {
   post: function() {
-    return {
-      statusCode: 508,
-      body:{
-        params: this.bodyParams
+    if(this.bodyParams.id || this.bodyParams.terofId) {
+      var doc = Downloads.findOne(this.bodyParams.id) || Downloads.findOne({terofId:this.bodyParams.id});
+      if(!doc) {
+        return {
+          statusCode: 404,
+          body: {
+            error: "LINK_ID_NOT_FOUND"
+          }
+        };
+      }
+      var linkId = Links.insert({
+        path: doc.path,
+        used: false,
+        requestingIP: this.request.connection.remoteAddress
+      })
+      return {
+        statusCode: 200,
+        body: {
+          result: linkId,
+          extra: {
+            terofId: doc.terofId,
+            title: doc.title
+          }
+        }
       }
     }
   }
 });
-API.addRoute('addLinkByTerofId', {authRequired: false}, {
+API.addRoute('addTerofLink', {authRequired: false}, {
   post: function() {
     if(this.bodyParams.id) {
+      if(Downloads.findOne({terofId : this.bodyParams.id})) {
+        return {
+          statusCode : 409,
+          body : {
+            error: "DUPLICATE_VIDEO"
+          }
+        };
+      }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
       var ranking = [
         'vidspot',
@@ -22,10 +50,10 @@ API.addRoute('addLinkByTerofId', {authRequired: false}, {
         'thand',
         'vidto',
         'movshare',
-  			'videoweed',
-  			'videowood',
-  			'nowvideo',
-  			'novamov'
+        'videoweed',
+        'videowood',
+        'nowvideo',
+        'novamov'
       ];
       var pf;
       var doc;
@@ -42,8 +70,8 @@ API.addRoute('addLinkByTerofId', {authRequired: false}, {
           doc.link = link.url;
           doc.olink = link.url;
           pf = Crawler.processSync(doc);
-        })
-      })
+        });
+      });
       if(pf){
         return {
           statusCode: 200,
@@ -51,14 +79,14 @@ API.addRoute('addLinkByTerofId', {authRequired: false}, {
             result : "LINK_PROCESSING",
             extra : doc
           }
-        }
+        };
       } else {
         return {
           statusCode: 404,
           body:{
             error : "PROVIDER_NOT_FOUND"
           }
-        }
+        };
       }
     } else {
       return {
@@ -66,7 +94,7 @@ API.addRoute('addLinkByTerofId', {authRequired: false}, {
         body: {
           error : "MISSING_PARAMETER"
         }
-      }
+      };
     }
   }
 });

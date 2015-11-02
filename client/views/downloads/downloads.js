@@ -4,15 +4,15 @@ Template.downloads.helpers({
     return Downloads.find();
   },
   shortenLink: function(link){
-    return '<p><abbr title='+link+'>'+link.substring(0,15)+'...</abbr>'
+    return '<p><abbr title='+link+'>'+link.substring(0,15)+'...</abbr>';
   },
   isDownloading: function(){
     return this.state == 1;
   },
   getProgress: function(prog){
     if(typeof prog === 'number') {
-      Session.set('progressPercent', prog)
-      Session.set('progressText', "we're "+prog+"% there")
+      Session.set('progressPercent', prog);
+      Session.set('progressText', "we're "+prog+"% there");
     }
   },
   getState: function(state) {
@@ -27,14 +27,11 @@ Template.downloads.helpers({
   getStateColor: function(state) {
     switch (state) {
       case 1:
-      return "yellow"
-        break;
+      return "yellow";
       case 2:
-        return "green"
-        break
+        return "green";
       default:
-        return "red"
-        break;
+        return "red";
     }
   },
   getHumanReadableSpeed: function() {
@@ -59,7 +56,7 @@ Template.downloads.events({
   "click .delBtn": function(event, template){
     Materialize.modalize.display({
       template: "delModal",
-      docId: this['_id']
+      docId: this._id
     });
   },
   "click #addBtn": function(e,tmpl) {
@@ -71,12 +68,12 @@ Template.downloads.events({
           Meteor.call('addLink',{link:link,client:true});
           Materialize.toast('link added!',2000);
         });
-      })
+      });
     }
   }
 });
 Template.delModal.events({
   "click #delBtn": function(event, template){
-    Downloads.remove(this.docId)
+    Meteor.call('abortDownload',this.docId);
   }
 });

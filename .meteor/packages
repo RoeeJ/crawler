@@ -34,7 +34,6 @@ reactive-dict
 accounts-password
 mrt:moment
 rajit:bootstrap3-datepicker
-meteorhacks:npm
 
 
 ldk:casperjs
@@ -42,8 +41,11 @@ check
 gadicohen:phantomjs
 
 
-npm-container
 meteortoys:allthings
 msolters:modalize
 raix:ui-progress-circle
 nimble:restivus
+meteorhacks:npm
+
+
+npm-container
