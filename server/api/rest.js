@@ -26,7 +26,8 @@ API.addRoute('getOTL', {}, {
       return {
         statusCode: doc ? 201 : 404,
         body : doc ? {
-          result: linkId
+          result: linkId,
+          extra: getContentType(doc);
         } : {
           error: "LINK_NOT_FOUND"
         }
@@ -97,3 +98,28 @@ API.addRoute('addTerofLink', {authRequired: false}, {
     }
   }
 });
+function getContentType(doc) {
+  var ctype;
+  var ext = doc.path.match('\\.(.+)$')[1];
+  switch(ext) {
+    case 'mp4':
+      ctype = 'video/mp4';
+      break;
+    case 'flv':
+      ctype = 'video/x-flv';
+      break;
+    case 'mov':
+      ctype = 'video/quicktime';
+      break;
+    case 'avi':
+      ctype = 'video/x-msvideo';
+      break;
+    case 'wmv':
+      ctype = 'video/x-ms-wmv';
+      break;
+    default:
+      ctype = 'application/force-download';
+      break;
+  }
+  return ctype;
+}
