@@ -4,29 +4,38 @@ API = new Restivus({
 });
 API.addRoute('getOTL', {}, {
   post: function() {
-    if(this.bodyParams.id || this.bodyParams.terofId) {
-      var doc = Downloads.findOne(this.bodyParams.id) || Downloads.findOne({terofId:this.bodyParams.id});
-      if(!doc) {
-        return {
-          statusCode: 404,
-          body: {
-            error: "LINK_ID_NOT_FOUND"
-          }
-        };
-      }
-      var linkId = Links.insert({
-        path: doc.path,
-        used: false,
-        requestingIP: this.request.connection.remoteAddress
-      });
+    if(this.request.headers.host !== 'crawler.slyke.net') {
       return {
-        statusCode: 200,
+        statusCode: 406,
         body: {
-          result: linkId,
-          extra: {
-            terofId: doc.terofId,
-            title: doc.title
-          }
+          error: "INVALID_ENDPOINT"
+        }
+      };
+    }
+    if(this.bodyParams.terofId) {
+      var doc = Downloads.findOne({terofId:this.bodyParams.terofId});
+      var linkId;
+      if(doc){
+        linkId = Links.insert({
+          terofId: doc.terofId,
+          requestingIP:this.bodyParams.requestingIP || this.request.connection.remoteAddress,
+          path:doc.path,
+          premium: this.bodyParams.premium || false
+        });
+      }
+      return {
+        statusCode: doc ? 201 : 404,
+        body : doc ? {
+          result: linkId
+        } : {
+          error: "LINK_NOT_FOUND"
+        }
+      };
+    } else {
+      return {
+        statusCode: 500,
+        body: {
+          error : "MISSING_PARAMETER"
         }
       };
     }
@@ -37,7 +46,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
     if(this.bodyParams.id) {
       if(Downloads.findOne({terofId : this.bodyParams.id})) {
         return {
-          statusCode : 409,
+          statusCode : 208,
           body : {
             error: "DUPLICATE_VIDEO"
           }
@@ -64,7 +73,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
       });
       if(pf){
         return {
-          statusCode: 200,
+          statusCode: 202,
           body: {
             result : "LINK_PROCESSING",
             extra : doc

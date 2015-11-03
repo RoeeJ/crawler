@@ -1,14 +1,15 @@
-var util = Meteor.npmRequire('util');
-var EventEmitter = Meteor.npmRequire('events').EventEmitter;
-var assert = Meteor.npmRequire('assert');
-var Fiber = Meteor.npmRequire('fibers');
-var URL = Meteor.npmRequire('url');
-var fs = Meteor.npmRequire('fs');
-var Downloader = Meteor.npmRequire('mt-files-downloader');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
+var assert = require('assert');
+var Fiber = require('fibers');
+var URL = require('url');
+var fs = require('fs');
+var Downloader = require('mt-files-downloader');
+var request = require('sync-request');
 var downloader = new Downloader();
-var downloads = {};
 _Crawler = function() {
     var self = this;
+    self.downloads = {};
     EventEmitter.call(self);
     var state = -1;
     this.on('init', function() {
@@ -79,6 +80,7 @@ _Crawler = function() {
             Fiber(function(){
             Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
             }).run();
+            request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
           }
         });
         dl.start();
@@ -137,5 +139,5 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 function getDocHash(doc) {
-  return Meteor.npmRequire('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31);
+  return require('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31);
 }
