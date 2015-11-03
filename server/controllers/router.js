@@ -26,6 +26,7 @@ Router.map(function () {
               }));
             } else {
               var fs = require('fs');
+              var total = fs.statSync(doc.path).size;
               var ctype;
               var ext = doc.path.match('\\.(.+)$')[1];
               switch(ext) {
@@ -48,13 +49,27 @@ Router.map(function () {
                   ctype = 'application/force-download';
                   break;
               }
-              this.response.writeHead(200, {
-                'Content-Type': ctype,
-                'Content-Length': fs.statSync(doc.path).size,
-                'Content-Disposition': 'attachment; filename="'+doc.path.match('[^\/]+$')+'"'
-              });
-                var Throttle = require('throttle');
-                fs.createReadStream(doc.path).pipe(new Throttle((doc.premium ? 5 : 1)*1024*1024)).pipe(this.response);
+              if(this.request.headers.range) {
+                var range = this.request.headers.range;
+                var parts = range.replace(/bytes=/, "").split("-");
+                var partialstart = parts[0];
+                var partialend = parts[1];
+
+                var start = parseInt(partialstart, 10);
+                var end = partialend ? parseInt(partialend, 10) : total-1;
+                var chunksize = (end-start)+1;
+                var file = fs.createReadStream(doc.path, {start: start, end: end});
+                this.response.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4' });
+                file.pipe(new Throttle((doc.premium ? 5 : 1)*1024*1024)).pipe(this.response);
+              } else {
+                this.response.writeHead(200, {
+                  'Content-Type': ctype,
+                  'Content-Length': total,
+                  'Content-Disposition': 'attachment; filename="'+doc.path.match('[^\/]+$')+'"'
+                });
+                  var Throttle = require('throttle');
+                  fs.createReadStream(doc.path).pipe(new Throttle((doc.premium ? 5 : 1)*1024*1024)).pipe(this.response);
+              }
             }
           }
         } else {
@@ -64,6 +79,7 @@ Router.map(function () {
           });
         }
       }catch(err) {
+        console.log(err);
         this.response.writeHead(500);
         this.response.end(stringify({
           error:"SERVER_ERROR",
