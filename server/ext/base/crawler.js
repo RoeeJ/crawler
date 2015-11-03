@@ -7,9 +7,9 @@ var fs = require('fs');
 var Downloader = require('mt-files-downloader');
 var request = require('sync-request');
 var downloader = new Downloader();
+var downloads = {};
 _Crawler = function() {
     var self = this;
-    self.downloads = {};
     EventEmitter.call(self);
     var state = -1;
     this.on('init', function() {
@@ -20,7 +20,7 @@ _Crawler = function() {
     });
 
     this.on('abortDownload',function(id) {
-      var doc = self.downloads[id].dl;
+      var doc = downloads[id];
       if(doc) {
         if(doc.dl) {
           doc.dl.stop();
@@ -33,6 +33,7 @@ _Crawler = function() {
         			fs.unlinkSync(doc.path+'.mtd');
         		}
         }
+        Downloads.remove(doc.docId);
       }
     });
 

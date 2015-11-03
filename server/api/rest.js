@@ -4,7 +4,7 @@ API = new Restivus({
 });
 API.addRoute('getOTL', {}, {
   post: function() {
-    if(this.request.headers.host !== 'crawler.slyke.net') {
+    if(this.request.headers.host === 'crawler.slyke.net') {
       return {
         statusCode: 406,
         body: {
@@ -46,7 +46,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
     if(this.bodyParams.id) {
       if(Downloads.findOne({terofId : this.bodyParams.id})) {
         return {
-          statusCode : 208,
+          statusCode : 409,
           body : {
             error: "DUPLICATE_VIDEO"
           }
