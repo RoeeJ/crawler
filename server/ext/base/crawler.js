@@ -64,8 +64,9 @@ _Crawler = function() {
             }).run();
         })
         .on('error',function(err){
+          console.log(err);
             Fiber(function(){
-                Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
+                //Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
             }).run();
             //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
         })

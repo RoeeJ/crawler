@@ -10,16 +10,16 @@ Vidzi.on('processURL',function(doc) {
 	horseman
 	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
 	.open(url)
-	.evaluate(function(){
-    return document.getElementsByTagName('script')[16].innerHTML
-  })
+	.waitForNextPage()
+	.html()
 	.then(function(html) {
-		if(html && html.indexOf('eval') !== -1)
+		if(html)
 		{
-			var fnString = eval(html.replace('eval',''));
+			var sn = html.match(new RegExp('(eval.+\\)\\)\\))'))[0];
+			var fnString = eval(sn.replace('eval',''));
 	    //return console.log(fnString)
 	    var link = fnString.match('file:[^"]*"([^"]+\\.(mp4|mov))"')[1];
-			var filename = link.substring(link.lastIndexOf('/')+1)
+			var filename = link.substring(link.lastIndexOf('/')+1);
 			Crawler.emit('addDownload',{
 				providerId: Vidzi.id,
 				link: link,

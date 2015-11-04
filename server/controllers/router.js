@@ -1,4 +1,37 @@
+var Horseman = Meteor.npmRequire('node-horseman');
 Router.map(function () {
+  this.route('proxy', {
+    path: '/proxy/:url',
+    where: 'server',
+    action: function() {
+      var self = this;
+      var url = this.params.url;
+      var _horseman = Horseman({
+    		webSecurity: false
+    	});
+      //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
+      _horseman
+    	.userAgent('Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0')
+    	.open(url.indexOf('http://') != -1 ? '' : 'http://' + url)
+      .cookies()
+    	.then(function(_cookies) {
+        var horseman = Horseman({
+      		webSecurity: false
+      	});
+        horseman
+      	.userAgent('Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0')
+      	.open(url.indexOf('http://') != -1 ? '' : 'http://' + url)
+        .cookies(_cookies)
+        .html()
+      	.then(function(html) {
+          self.response.writeHead(200);
+          self.response.end(html);
+      	})
+      	.close();
+    	})
+    	.close();
+    }
+  });
   this.route('stream', {
     path: '/stream/:id',
     where: 'server',
@@ -61,7 +94,7 @@ Router.map(function () {
                 var chunksize = (end-start)+1;
                 var file = fs.createReadStream(doc.path, {start: start, end: end});
                 this.response.writeHead(206,
-                  { 
+                  {
                   'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
                   'Accept-Ranges': 'bytes',
                   'Content-Length': chunksize,

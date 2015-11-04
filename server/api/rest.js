@@ -27,11 +27,11 @@ API.addRoute('getOTL', {}, {
         statusCode: doc ? 201 : 404,
         body : doc ? {
           result: linkId,
-          extra: getContentType(doc);
+          extra: getContentType(doc)
         } : {
           error: "LINK_NOT_FOUND"
         }
-      };
+      }
     } else {
       return {
         statusCode: 500,
@@ -54,7 +54,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         };
       }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
-      var ranking = [ 'vidspot', 'youwatch', 'thand', 'vidto', 'movshare', 'videoweed', 'videowood', 'nowvideo', 'novamov' ];
+      var ranking = ['nitro', 'vidspot'];
       var pf;
       var doc;
       ranking.forEach(function(site){
