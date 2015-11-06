@@ -26,7 +26,11 @@
             </span>
           <p>{{filename}} <br>
             {{#if isDownloading}}
-            {{> progressCircle progress=progress radius="35" class="{{getStateColor state}}"}}
+            {{#if isEncoding}}
+            {{> progressCircle progress=progress radius="35" class="blue"}}
+            {{else}}
+            {{> progressCircle progress=progress radius="35" class="green"}}
+            {{/if}}
             {{#if speed}}
             <br> {{getHumanReadableSpeed}}
             {{/if}}

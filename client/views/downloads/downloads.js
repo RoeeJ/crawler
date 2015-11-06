@@ -7,7 +7,10 @@ Template.downloads.helpers({
     return '<p><abbr title='+link+'>'+link.substring(0,15)+'...</abbr>';
   },
   isDownloading: function(){
-    return this.state == 1;
+    return this.state === 1;
+  },
+  isEncoding: function() {
+    return this.state === 'c';
   },
   getProgress: function(prog){
     if(typeof prog === 'number') {
