@@ -26,12 +26,12 @@ API.addRoute('getOTL', {}, {
       return {
         statusCode: doc ? 201 : 404,
         body : doc ? {
-          result: linkId,
+          result: linkId+'.'+doc.filename.substring(doc.filename.lastIndexOf('.')+1),
           extra: getContentType(doc)
         } : {
           error: "LINK_NOT_FOUND"
         }
-      }
+      };
     } else {
       return {
         statusCode: 500,
@@ -54,13 +54,13 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         };
       }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
-      var ranking = ['nitro', 'vidspot'];
+      var ranking = ['nitro'];
       var pf;
       var doc;
       ranking.forEach(function(site){
         if(pf) return;
         odoc.links.filter(function(link){
-          return link.host.indexOf(site) !== -1;
+          return link.url.indexOf(site) !== -1;
         }).forEach(function(link){
           if(pf) return;
           doc = {};

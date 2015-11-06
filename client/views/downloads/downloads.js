@@ -30,6 +30,8 @@ Template.downloads.helpers({
       return "yellow";
       case 2:
         return "green";
+      case 'c':
+        return "blue";
       default:
         return "red";
     }

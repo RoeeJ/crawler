@@ -6,5 +6,6 @@
   "url-parse":"1.0.4",
   "sync-request":"2.1.0",
   "mt-files-downloader": "https://github.com/nrol39/node-mt-files-downloader/archive/4fb9f482b7b6cecf81d6f988dc0d94a6f2f0368e.tar.gz",
-  "throttle":"1.0.3"
+  "throttle":"1.0.3",
+  "fluent-ffmpeg":"2.0.1"
 }

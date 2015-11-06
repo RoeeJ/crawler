@@ -17,24 +17,38 @@ _Crawler = function() {
     self.state = 1;
     if(!this.providers) this.provides = [];
     self.emit('ready');
+    fs.readdirSync(Config.BASE_PATH)
+    .filter(function(file) {
+      return file.indexOf('mtd') > -1;
+    }).forEach(function(file){
+      Fiber(function(){
+        var path = Config.BASE_PATH + file;
+        var doc = Downloads.findOne({path:path.replace('.mtd','')});
+        if(doc) {
+          initDownload(downloader.resumeDownload(path),doc);
+        }
+      }).run();
+    });
     });
 
     this.on('abortDownload',function(id) {
-      var doc = downloads[id];
-      if(doc) {
-        if(doc.dl) {
-          doc.dl.stop();
+      Fiber(function(){
+        var doc = downloads[getDocHash(Downloads.findOne(id))];
+        if(doc) {
+          if(doc.dl) {
+            doc.dl.stop();
+          }
+          if(doc.path) {
+          		if(fs.existsSync(doc.path)){
+          			fs.unlinkSync(doc.path);
+          		}
+          		if(fs.existsSync(doc.path+'.mtd')){
+          			fs.unlinkSync(doc.path+'.mtd');
+          		}
+          }
+          Downloads.remove(id);
         }
-        if(doc.path) {
-        		if(fs.existsSync(doc.path)){
-        			fs.unlinkSync(doc.path);
-        		}
-        		if(fs.existsSync(doc.path+'.mtd')){
-        			fs.unlinkSync(doc.path+'.mtd');
-        		}
-        }
-        Downloads.remove(doc.docId);
-      }
+      }).run();
     });
 
     this.on('addDownload', function(doc) {
@@ -53,39 +67,7 @@ _Crawler = function() {
         } else {
           dl = downloader.download(url,filepath);
         }
-        dl.on('start',function(dl){
-          Fiber(function(){
-            var hash = getDocHash(doc);
-            downloads[hash] = doc;
-            downloads[hash].state = 1;
-            downloads[hash].path = filepath;
-            downloads[hash].docId = Downloads.insert(doc);
-            downloads[hash].dl = dl;
-            }).run();
-        })
-        .on('error',function(err){
-          console.log(err);
-            Fiber(function(){
-                //Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
-            }).run();
-            //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
-        })
-        .on('progress',function(prog) {
-            Fiber(function(){
-                Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
-            }).run();
-        })
-        .on('end',function(dl){
-          if(dl.error && dl.error !== ''){
-            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:''}});
-          } else {
-            Fiber(function(){
-            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
-            }).run();
-            request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
-          }
-        });
-        dl.start();
+        initDownload(dl,doc);
     });
 
     this.on('addProvider', function(provider) {
@@ -142,4 +124,74 @@ function guid() {
 }
 function getDocHash(doc) {
   return require('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31);
+}
+function initDownload(dl,doc) {
+  var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+  dl.on('start',function(dl){
+    try {
+      Fiber(function(){
+        var hash = getDocHash(doc);
+        downloads[hash] = doc;
+        downloads[hash].state = 1;
+        downloads[hash].path = filepath;
+        downloads[hash].docId = doc._id || Downloads.insert(doc);
+        downloads[hash].dl = dl;
+        }).run();
+    }catch(err){}
+  })
+  .on('error',function(err){
+    console.log(err);
+      Fiber(function(){
+          //Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
+      }).run();
+      //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
+  })
+  .on('progress',function(prog) {
+      Fiber(function(){
+          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
+      }).run();
+  })
+  .on('end',function(dl){
+    if(dl.error && dl.error !== ''){
+      Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:''}});
+    } else {
+      if(fs.statSync(doc.path).size > 5*1024*1024){
+        if(doc.filename.indexOf('.avi') > -1){
+          Fiber(function(){
+          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:'c'},$unset:{progress:''}});
+          }).run();
+          var ffmpeg = require('fluent-ffmpeg');
+          ffmpeg(doc.path)
+          .audioCodec('libfdk_aac')
+          .videoCodec('libx264')
+          .outputOptions('-crf','23','-vbr','4','-movflags','+faststart')
+          .on('progress',function(prog){
+            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog}});
+          })
+          .on('error',function(err){
+            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status,error:err.message},$unset:{progress:"",speed:""}});
+          })
+          .on('end',function(){
+            Fiber(function(){
+            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
+            }).run();
+            request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
+          })
+          .save(doc.path.replace('.avi','.mp4'));
+        } else {
+          Fiber(function(){
+          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
+          }).run();
+          request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
+        }
+      } else {
+        if(fs.existsSync(doc.path)){
+          fs.unlinkSync(doc.path);
+        }
+        downloads[getDocHash(doc)] = undefined;
+        Fiber(function(){Downloads.remove(doc._id);}).run();
+      }
+    }
+  })
+  .start();
 }

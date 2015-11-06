@@ -38,7 +38,7 @@ Router.map(function () {
     action: function() {
       try {
         if(this.params.id) {
-          var doc = Links.findOne(this.params.id);
+          var doc = Links.findOne(this.params.id.split('.')[0]);
           if(doc) {
             if(!doc.used) {
               var now = new Date();

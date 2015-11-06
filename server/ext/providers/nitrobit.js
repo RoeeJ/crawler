@@ -17,11 +17,11 @@ NitroBit.on('processURL',function(doc) {
     return $('a#download[href]').attr('href');
   })
 	.then(function(link) {
-    Crawler.emit('addDownload',{
-      providerId: MultiLazy.id,
-      link: link,
-      filename: link.substring(link.lastIndexOf('/')+1)
-    });
+		doc.providerId = NitroBit.id;
+		doc.olink = doc.link;
+		doc.link = link;
+		doc.filename = link.substring(link.lastIndexOf('/')+1);
+    Crawler.emit('addDownload',doc);
 	})
 	.close();
 });
