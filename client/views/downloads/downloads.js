@@ -9,9 +9,6 @@ Template.downloads.helpers({
   isDownloading: function(){
     return this.state === 1;
   },
-  isEncoding: function() {
-    return this.state === 'c';
-  },
   getProgress: function(prog){
     if(typeof prog === 'number') {
       Session.set('progressPercent', prog);
@@ -30,11 +27,9 @@ Template.downloads.helpers({
   getStateColor: function(state) {
     switch (state) {
       case 1:
-      return "yellow";
+        return "yellow";
       case 2:
         return "green";
-      case 'c':
-        return "blue";
       default:
         return "red";
     }

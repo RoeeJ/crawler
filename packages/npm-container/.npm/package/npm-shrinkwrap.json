@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "fluent-ffmpeg": {
+      "version": "2.0.1",
+      "dependencies": {
+        "async": {
+          "version": "1.5.0"
+        }
+      }
+    },
     "mt-files-downloader": {
       "version": "https://github.com/nrol39/node-mt-files-downloader/archive/4fb9f482b7b6cecf81d6f988dc0d94a6f2f0368e.tar.gz",
       "dependencies": {
@@ -192,7 +200,7 @@
               "version": "0.8.0"
             },
             "hawk": {
-              "version": "3.1.0",
+              "version": "3.1.1",
               "dependencies": {
                 "hoek": {
                   "version": "2.16.3"
@@ -405,7 +413,7 @@
           "version": "0.8.0"
         },
         "hawk": {
-          "version": "3.1.0",
+          "version": "3.1.1",
           "dependencies": {
             "hoek": {
               "version": "2.16.3"

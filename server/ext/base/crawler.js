@@ -153,47 +153,10 @@ function initDownload(dl,doc) {
   })
   .on('end',function(dl){
     if(dl.error && dl.error !== ''){
-      Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:''}});
+      Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
     } else {
       if(fs.statSync(doc.path).size > 5*1024*1024){
-        if(doc.filename.indexOf('.avi') > -1){
-          Fiber(function(){
-          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:'c'},$unset:{progress:''}});
-          }).run();
-          var ffmpeg = require('fluent-ffmpeg');
-          ffmpeg(doc.path)
-          .videoCodec('mpeg4')
-          .outputOptions('-crf','23','-vbr','4','-movflags','+faststart')
-          .on('progress',function(prog){
-            Fiber(function(){
-              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog}});
-            });
-          })
-          .on('error',function(err){
-            Fiber(function(){
-              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status,error:err.message},$unset:{progress:"",speed:""}});
-            });
-          })
-          .on('end',function(){
-            Fiber(function(){
-            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
-            }).run();
-            request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
-          })
-          .save(doc.path.replace('.avi','.mp4'));
-        } else {
-          Fiber(function(){
-            if(fs.existsSync(doc.path)){
-              fs.unlinkSync(doc.path);
-              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{
-                path:doc.path.replace('.avi','mp4'),
-                filename:doc.filename.replace('.avi','mp4')
-              },$unset:{progress:''}});
-              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
-            }
-          }).run();
-          request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
-        }
+        request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
       } else {
         if(fs.existsSync(doc.path)){
           fs.unlinkSync(doc.path);
