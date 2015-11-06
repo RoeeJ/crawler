@@ -162,8 +162,7 @@ function initDownload(dl,doc) {
           }).run();
           var ffmpeg = require('fluent-ffmpeg');
           ffmpeg(doc.path)
-          .audioCodec('libfdk_aac')
-          .videoCodec('libx264')
+          .videoCodec('mpeg4')
           .outputOptions('-crf','23','-vbr','4','-movflags','+faststart')
           .on('progress',function(prog){
             Fiber(function(){
