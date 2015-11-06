@@ -166,10 +166,14 @@ function initDownload(dl,doc) {
           .videoCodec('libx264')
           .outputOptions('-crf','23','-vbr','4','-movflags','+faststart')
           .on('progress',function(prog){
-            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog}});
+            Fiber(function(){
+              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog}});
+            });
           })
           .on('error',function(err){
-            Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status,error:err.message},$unset:{progress:"",speed:""}});
+            Fiber(function(){
+              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status,error:err.message},$unset:{progress:"",speed:""}});
+            });
           })
           .on('end',function(){
             Fiber(function(){
@@ -180,7 +184,14 @@ function initDownload(dl,doc) {
           .save(doc.path.replace('.avi','.mp4'));
         } else {
           Fiber(function(){
-          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
+            if(fs.existsSync(doc.path)){
+              fs.unlinkSync(doc.path);
+              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{
+                path:doc.path.replace('.avi','mp4'),
+                filename:doc.filename.replace('.avi','mp4')
+              },$unset:{progress:''}});
+              Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2},$unset:{progress:''}});
+            }
           }).run();
           request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
         }
