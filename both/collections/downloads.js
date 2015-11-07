@@ -11,3 +11,6 @@ this.Downloads.userCanUpdate = function(userId, doc) {
 this.Downloads.userCanRemove = function(userId, doc) {
 	return true;
 };
+this.Downloads.before.insert(function (userId, doc) {
+  doc.createdAt = Date.now();
+});

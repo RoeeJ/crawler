@@ -1,7 +1,7 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var self = YouWatch;
-var YouWatch = new _Crawler();
+var YouWatch = new _Doom();
 YouWatch.on('processURL',function(doc) {
 	processOnce(doc);
 });
@@ -25,7 +25,7 @@ function processOnce(doc) {
 		doc.link = fnString.match('https{0,1}:\\/\\/fs\\d.+(mp4|mov)')[0];
 		doc.filename = link.substring(link.lastIndexOf('/')+1);
 		doc.providerId = YouWatch.id;
-		Crawler.emit('addDownload',doc);
+		Doom.emit('addDownload',doc);
 		return true;
 	})
 	.close();
@@ -57,7 +57,7 @@ function processTwice(doc) {
 		doc.link = fnString.match('https{0,1}:\\/\\/fs\\d.+(mp4|mov)')[0];
 		doc.filename = link.substring(link.lastIndexOf('/')+1);
 		doc.providerId = YouWatch.id;
-		Crawler.emit('addDownload',doc);
+		Doom.emit('addDownload',doc);
 		return true;
 	})
 	.close();
@@ -82,4 +82,4 @@ YouWatch.matcher = function(url) {
     return url.toLowerCase().indexOf('youwatch.org') > -1 || url.toLowerCase().indexOf('thand.info') > -1;
 }
 YouWatch.id = 'youwatch';
-Crawler.emit('addProvider', YouWatch);
+Doom.emit('addProvider', YouWatch);

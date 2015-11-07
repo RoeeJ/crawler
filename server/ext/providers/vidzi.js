@@ -1,6 +1,6 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
-var Vidzi = new _Crawler();
+var Vidzi = new _Doom();
 var self = Vidzi;
 Vidzi.on('processURL',function(doc) {
 	var url = doc.link;
@@ -20,7 +20,7 @@ Vidzi.on('processURL',function(doc) {
 	    //return console.log(fnString)
 	    var link = fnString.match('file:[^"]*"([^"]+\\.(mp4|mov))"')[1];
 			var filename = link.substring(link.lastIndexOf('/')+1);
-			Crawler.emit('addDownload',{
+			Doom.emit('addDownload',{
 				providerId: Vidzi.id,
 				link: link,
 				filename: filename
@@ -35,4 +35,4 @@ Vidzi.matcher = function(url) {
     return url.toLowerCase().indexOf('vidzi.tv') > -1;
 }
 Vidzi.id = 'vidzi';
-Crawler.emit('addProvider', Vidzi);
+Doom.emit('addProvider', Vidzi);

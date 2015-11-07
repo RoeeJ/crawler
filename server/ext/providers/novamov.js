@@ -2,7 +2,7 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
 var request = Meteor.npmRequire('sync-request');
-var MultiLazy = new _Crawler();
+var MultiLazy = new _Doom();
 var self = MultiLazy;
 MultiLazy.on('processURL',function(doc) {
 	var _url = doc.link;
@@ -26,7 +26,7 @@ MultiLazy.on('processURL',function(doc) {
 			var url = body.match('url=([^&]+)')[1];
 			var title = body.match('title=([^&]+)')[1];
 			var filename = url.substring(url.lastIndexOf('/')+1);
-			Crawler.emit('addDownload',{
+			Doom.emit('addDownload',{
 				providerId: MultiLazy.id,
 				link: url,
 				filename: filename,
@@ -54,4 +54,4 @@ MultiLazy.matcher = function(url) {
 		return false;
 }
 MultiLazy.id = 'MultiLazy';
-Crawler.emit('addProvider', MultiLazy);
+Doom.emit('addProvider', MultiLazy);

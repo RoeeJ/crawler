@@ -27,8 +27,6 @@
           <p>{{filename}} <br>
             {{#if isDownloading}}
             {{> progressCircle progress=progress radius="35" class="green"}}
-            {{/if}}
-            {{#if speed}}
             <br> {{getHumanReadableSpeed}}
             {{/if}}
           </p>

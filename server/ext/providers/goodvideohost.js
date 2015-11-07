@@ -1,6 +1,6 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
-var GoodVideoHost = new _Crawler();
+var GoodVideoHost = new _Doom();
 var self = GoodVideoHost;
 GoodVideoHost.on('processURL',function(doc) {
 	var url = doc.link;
@@ -15,7 +15,7 @@ GoodVideoHost.on('processURL',function(doc) {
 		var link = html.match('file:"([^"]+)"')[1];
 		var thumbnail = html.match('image:\\s*"([^"]+)"')[1];
 		var filename = link.substring(link.lastIndexOf('/')+1)
-		Crawler.emit('addDownload',{
+		Doom.emit('addDownload',{
 			providerId: GoodVideoHost.id,
 			link: link,
 			filename: filename,
@@ -28,4 +28,4 @@ GoodVideoHost.matcher = function(url) {
     return url.toLowerCase().indexOf('goodvideohost') > -1;
 }
 GoodVideoHost.id = 'GoodVideoHost';
-Crawler.emit('addProvider', GoodVideoHost);
+Doom.emit('addProvider', GoodVideoHost);

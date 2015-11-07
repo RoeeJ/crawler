@@ -4,7 +4,7 @@ API = new Restivus({
 });
 API.addRoute('getOTL', {}, {
   post: function() {
-    if(this.request.headers.host === 'crawler.slyke.net') {
+    if(this.request.headers.host === 'doom.slyke.net') {
       return {
         statusCode: 406,
         body: {
@@ -69,10 +69,23 @@ API.addRoute('addTerofLink', {authRequired: false}, {
           doc.about = odoc.about;
           doc.link = link.url;
           doc.olink = link.url;
-          pf = Crawler.processSync(doc);
+          //45324
+          if(link.url.indexOf('nitrobit') > -1){
+            pf = processNitroBit(link.url,Config.NITRO_PASSWORDS.slice(),doc) ? -1 : -2;
+          } else {
+            pf = Doom.processSync(doc);
+          }
         });
       });
       if(pf){
+        if(pf === -2){
+          return {
+            statusCode: 429,
+            body: {
+              error : "OVER_QUOTA"
+            }
+          };
+        }
         return {
           statusCode: 202,
           body: {
@@ -122,4 +135,45 @@ function getContentType(doc) {
       break;
   }
   return ctype;
+}
+function processNitroBit(url,passwords,doc){
+  var password = passwords.pop();
+  if(!password) return false;
+  var ret = Async.runSync(function(done){
+    var pf;
+    var fileid = url.substring(url.lastIndexOf('/')+1);
+    //http://www.nitrobit.net/watch/aq7nt22Q4
+  	var Horseman = Meteor.npmRequire('node-horseman');
+  	var horseman = Horseman({
+  		webSecurity: false
+  	});
+    //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
+  	horseman
+  	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
+  	.open('http://www.nitrobit.net/ajax/unlock.php?password='+password+'&file='+fileid+'&keep=false')
+  	.evaluate(function(){
+      if($('a#download[href]').attr('href')) {
+        pf = true;
+        return $('a#download[href]').attr('href');
+      }
+      return undefined;
+    })
+  	.then(function(link) {
+      if(link){
+        doc.providerId = 'NitroBit';
+    		doc.olink = doc.link;
+    		doc.link = link;
+    		doc.filename = link.substring(link.lastIndexOf('/')+1);
+        Doom.emit('addDownload',doc);
+      }
+  	})
+  	.close();
+    if(pf){
+      done(null,pf);
+    } else {
+      done(pf,null);
+    }
+  });
+  if(ret.error) return processNitroBit(url,passwords);
+  return true;
 }

@@ -1,6 +1,6 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
-var VidSpot = new _Crawler();
+var VidSpot = new _Doom();
 var self = VidSpot;
 VidSpot.on('processURL',function(doc) {
 	var url = doc.link;
@@ -17,7 +17,7 @@ VidSpot.on('processURL',function(doc) {
 		doc.providerId = VidSpot.id;
 		doc.link = link;
 		doc.filename = link.substring(link.lastIndexOf('/')+1).replace('?v2','');
-		Crawler.emit('addDownload',doc);
+		Doom.emit('addDownload',doc);
 	})
 	.close();
 });
@@ -25,4 +25,4 @@ VidSpot.matcher = function(url) {
     return url.toLowerCase().indexOf('vidspot.net') > -1;
 }
 VidSpot.id = 'vidspot';
-Crawler.emit('addProvider', VidSpot);
+Doom.emit('addProvider', VidSpot);

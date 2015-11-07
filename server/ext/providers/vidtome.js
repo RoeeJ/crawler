@@ -1,6 +1,6 @@
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
-var VidToMe = new _Crawler();
+var VidToMe = new _Doom();
 var self = VidToMe;
 VidToMe.on('processURL',function(doc) {
 	var url = doc.link;
@@ -21,7 +21,7 @@ VidToMe.on('processURL',function(doc) {
 		var links = html.match(new RegExp('http:\\/\\/\\d{2,3}\\.+\\d{2,3}.+(mp4|mov)','gi'));
 		var link = links[links.length-1];
 		var filename = link.substring(link.lastIndexOf('/')+1)
-		Crawler.emit('addDownload',{
+		Doom.emit('addDownload',{
 			providerId: VidToMe.id,
 			link: link,
 			filename: filename
@@ -35,4 +35,4 @@ VidToMe.matcher = function(url) {
 		//return false;
 }
 VidToMe.id = 'vidtome';
-Crawler.emit('addProvider', VidToMe);
+Doom.emit('addProvider', VidToMe);

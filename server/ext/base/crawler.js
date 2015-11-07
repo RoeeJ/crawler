@@ -8,7 +8,7 @@ var Downloader = require('mt-files-downloader');
 var request = require('sync-request');
 var downloader = new Downloader();
 var downloads = {};
-_Crawler = function() {
+_Doom = function() {
     var self = this;
     EventEmitter.call(self);
     var state = -1;
@@ -111,8 +111,8 @@ _Crawler = function() {
       return pf;
     };
 };
-util.inherits(_Crawler,EventEmitter);
-Crawler = new _Crawler();
+util.inherits(_Doom,EventEmitter);
+Doom = new _Doom();
 function guid() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -156,6 +156,7 @@ function initDownload(dl,doc) {
       Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
     } else {
       if(fs.statSync(doc.path).size > 5*1024*1024){
+        Fiber(function(){Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2}});}).run();
         request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
       } else {
         if(fs.existsSync(doc.path)){

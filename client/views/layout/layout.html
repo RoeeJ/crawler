@@ -1,7 +1,7 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>
-		Crawler
+		Doom
 	</title>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -17,7 +17,7 @@
 	<div id="content" class="sticky-wrapper">
 		<nav>
 			<a href="#!" class="brand-logo center">
-				Crawler
+				Doom
 			</a>
 			<div id="menu" class="nav-wrapper">
 			</div>
@@ -32,7 +32,7 @@
 	<div id="content" class="sticky-wrapper">
 		<nav>
 			<a href="#!" class="brand-logo center">
-				Crawler
+				Doom
 			</a>
 			<div id="menu" class="nav-wrapper navbar-inverse navbar-fixed-top">
 				{{> PublicLayoutLeftMenu}}{{> PublicLayoutRightMenu}}
@@ -81,7 +81,7 @@
 	<div id="content" class="sticky-wrapper">
 		<nav>
 			<a href="#!" class="brand-logo center">
-				Crawler
+				Doom
 			</a>
 			<div id="menu" class="nav-wrapper navbar-default navbar-fixed-top">
 				{{> PrivateLayoutLeftMenu}}{{> PrivateLayoutRightMenu}}
@@ -142,5 +142,10 @@
 				<i class="material-icons left">dns</i>
 			</a>
 		</li>
+		{{#if currentUser}}
+		<li style="float:right; width:20%;margin-top:3%;position:fixed;right:-25px;top:10px;z-index:999">
+			{{> circularProgress canvasSize=200 arcWidth=30}}
+		</li>
+		{{/if}}
 	</ul>
 </template>
