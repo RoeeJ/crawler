@@ -149,39 +149,38 @@ function processNitroBit(url,passwords,doc){
   	});
     //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
   	horseman
-  	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
-  	.open('http://www.nitrobit.net/ajax/unlock.php?password='+password+'&file='+fileid+'&keep=false')
+  	.userAgent(getRandString(64))
+  	.open('http://www.nitrobit.net/ajax/unlock.php?password='+password+'&file='+fileid)
     .html()
-    .evaluate(function(html){
-      if(html.indexOf('href' > -1)){
-        return true;
-      }
-      console.log(html);
+    .then(function(html){
+      pf = html.indexOf('href') > -1;
     })
-  	.evaluate(function(dd){
-      if(!dd) return false;
-      if($('a#download[href]').attr('href')) {
-        pf = true;
+  	.evaluate(function(){
+      if(pf){
         return $('a#download[href]').attr('href');
       }
-      return undefined;
     })
   	.then(function(link) {
       if(link){
+        console.warn('link found!');
         doc.providerId = 'NitroBit';
     		doc.olink = doc.link;
     		doc.link = link;
     		doc.filename = link.substring(link.lastIndexOf('/')+1);
         Doom.emit('addDownload',doc);
       }
+      if(pf){
+        done(null,pf);
+      } else {
+        done("INVALID_PASSWORD",null);
+      }
   	})
   	.close();
-    if(pf){
-      done(null,pf);
-    } else {
-      done(pf,null);
-    }
   });
+  console.log(ret);
   if(ret.error) return processNitroBit(url,passwords);
   return true;
+}
+function getRandString(len){
+  return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, len || 10);
 }

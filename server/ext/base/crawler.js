@@ -52,6 +52,7 @@ _Doom = function() {
     });
 
     this.on('addDownload', function(doc) {
+      return console.error(doc);
         check(doc,Object);
         var url = doc.link;
         check(url, String);
