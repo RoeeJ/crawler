@@ -17,7 +17,7 @@ Template.layout.rendered = function() {
 				}
 			}
 		} else {
-			if(href.indexOf("http://") != 0 && href.indexOf("https://") != 0 && href.indexOf("#") != 0) {
+			if(href.indexOf("http://") !== 0 && href.indexOf("https://") !== 0 && href.indexOf("#") !== 0) {
 				$('html,body').scrollTop(0);
 			}
 		}
