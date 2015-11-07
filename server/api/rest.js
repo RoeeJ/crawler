@@ -151,7 +151,15 @@ function processNitroBit(url,passwords,doc){
   	horseman
   	.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
   	.open('http://www.nitrobit.net/ajax/unlock.php?password='+password+'&file='+fileid+'&keep=false')
-  	.evaluate(function(){
+    .html()
+    .evaluate(function(html){
+      if(html.indexOf('href' > -1)){
+        return true;
+      }
+      console.log(html);
+    })
+  	.evaluate(function(dd){
+      if(!dd) return false;
       if($('a#download[href]').attr('href')) {
         pf = true;
         return $('a#download[href]').attr('href');

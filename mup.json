@@ -30,7 +30,7 @@
   "appName": "Doom",
 
   // Location of app (local directory)
-  "app": "/ext/Meteor/Crawler",
+  "app": "/opt/bitnami/apps/jenkins/jenkins_home/jobs/Doom/workspace",
 
   // Configure environment
   "env": {
