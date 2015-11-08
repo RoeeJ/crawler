@@ -146,7 +146,7 @@ function processNitroBit(url,passwords,doc){
   	var Horseman = Meteor.npmRequire('node-horseman');
   	var horseman = Horseman({
   		webSecurity: false,
-      proxy: '120.195.197.165',
+      proxy: '120.195.197.165:80',
       proxyType: 'html'
   	});
     //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
