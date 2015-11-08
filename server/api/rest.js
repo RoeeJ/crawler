@@ -71,7 +71,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
           doc.olink = link.url;
           //45324
           if(link.url.indexOf('nitrobit') > -1){
-            pf = processNitroBit(link.url,['NB4HRBZ5JVFD'],doc) ? -1 : -2;
+            pf = processNitroBit(link.url,['NB1782AJKP95'],doc) ? -1 : -2;
           } else {
             pf = Doom.processSync(doc);
           }
