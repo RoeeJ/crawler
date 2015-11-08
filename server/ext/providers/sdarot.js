@@ -8,7 +8,6 @@ Sdarot.on('processURL',function(doc) {
   var serie = _temp[0];
   var season = _temp[1];
   var episode = _temp[2];
-  console.log([serie,season,episode]);
 	var horseman = Horseman({
 		webSecurity: false
 	});
@@ -18,17 +17,20 @@ Sdarot.on('processURL',function(doc) {
     .headers({
       'X-Requested-With' : 'XMLHttpRequest'
     })
-  	.post('http://sdarot.pm/ajax/watch','watch=true&serie=59&season=1&episode=2')
+  	.post('http://sdarot.pm/ajax/watch','watch=false&serie=59&season=1&episode=2')
     .html("body")
     .then(function(html){
-      var md = JSON.parse(html);
-      if(md.watch && md.watch.url){
-        done(null,md);
-      } else {
-        done(md,null);
-      }
+			try{
+				var md = JSON.parse(html);
+	      if(md.watch && md.watch.url){
+	        done(null,md);
+	      } else {
+	        done(md,null);
+	      }
+			}catch(_err) {
+				console.error(html);
+			}
     })
-    .screenshot('/Users/cipher/test.png')
   	.close();
   });
   if(!firstRun.result) {
@@ -36,14 +38,17 @@ Sdarot.on('processURL',function(doc) {
   		webSecurity: false
   	});
     _horseman
-    .userAgent('Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) CriOS/30.0.1599.12 Mobile/11A465 Safari/8536.25 (3B92C18B-D9DE-4CB7-A02A-22FD2AF17C8F')
+    .userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16')
     .post('http://mobile.sdarot.wf/mobile.php?do=searchServer','vid='+firstRun.error.VID)
     .headers({
       'X-Requested-With' : 'XMLHttpRequest'
     })
     .html("body")
     .then(function(html){
-      console.log(html);
+			doc.providerId = Sdarot.id;
+			doc.link = html;
+			doc.filename = html.match('.d\\/(.+)\\?')[1];
+			Doom.emit('addDownload',doc);
     })
     .close();
   } else {
