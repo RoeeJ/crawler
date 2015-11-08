@@ -164,7 +164,7 @@ function processNitroBit(url,passwords,doc){
     })
   	.then(function(link) {
       if(link){
-        console.warn('link found!');
+        pf = true;
         doc.providerId = 'NitroBit';
     		doc.olink = doc.link;
     		doc.link = link;
