@@ -159,13 +159,8 @@ function processNitroBit(url,passwords,doc){
     })
   	.open('http://www.nitrobit.net/ajax/unlock.php?password='+password+'&file='+fileid+'&keep=false')
     .html()
-    .then(function(html){
-      pf = html.indexOf('href') > -1;
-    })
   	.evaluate(function(){
-      if(pf){
-        return $('a#download[href]').attr('href');
-      }
+      return $('a#download[href]').attr('href');
     })
   	.then(function(link) {
       if(link){
