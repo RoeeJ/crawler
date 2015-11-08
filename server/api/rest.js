@@ -54,7 +54,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         };
       }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
-      var ranking = ['sdarot'];
+      var ranking = ['nitro','sdarot'];
       var pf;
       var doc;
       ranking.forEach(function(site){
@@ -139,13 +139,17 @@ function getContentType(doc) {
 function processNitroBit(url,passwords,doc){
   var password = passwords.pop();
   if(!password) return false;
+  var proxies = JSON.parse(request('GET','https://happy-proxy.com/fresh_proxies?key=1c11d40b93cb0259').getBody('UTF8'))
+  var proxy = proxies[(Math.round(Math.random()*100)) % (proxies.length-1)]
   var ret = Async.runSync(function(done){
     var pf;
     var fileid = url.substring(url.lastIndexOf('/')+1);
     //http://www.nitrobit.net/watch/aq7nt22Q4
   	var Horseman = Meteor.npmRequire('node-horseman');
   	var horseman = Horseman({
-  		webSecurity: false
+  		webSecurity: false,
+      proxy: proxy,
+      proxyType: 'html'
   	});
     //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
   	horseman
