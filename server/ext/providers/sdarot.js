@@ -46,7 +46,7 @@ Sdarot.on('processURL',function(doc) {
     .html("body")
     .then(function(html){
 			doc.providerId = Sdarot.id;
-			doc.link = html;
+			doc.link = html.replace(/&amp;/g, '&');
 			doc.filename = html.match('.d\\/(.+)\\?')[1];
 			Doom.emit('addDownload',doc);
     })
