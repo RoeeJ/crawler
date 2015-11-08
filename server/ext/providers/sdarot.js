@@ -56,6 +56,7 @@ Sdarot.on('processURL',function(doc) {
   }
 });
 Sdarot.matcher = function(url) {
+		console.log(url);
     return url.toLowerCase().indexOf('sdarot') > -1;
 };
 Sdarot.id = 'Sdarot';

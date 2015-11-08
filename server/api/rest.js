@@ -54,7 +54,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         };
       }
       var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
-      var ranking = ['nitro'];
+      var ranking = ['sdarot'];
       var pf;
       var doc;
       ranking.forEach(function(site){

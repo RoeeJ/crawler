@@ -123,7 +123,7 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 function getDocHash(doc) {
-  return require('crypto').createHash('md5').update(doc.title || doc.olink || doc.link).digest('hex').substring(0,31);
+  return require('crypto').createHash('md5').update(doc.olink || doc.link || doc.title).digest('hex').substring(0,31);
 }
 function initDownload(dl,doc) {
   var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
@@ -148,16 +148,24 @@ function initDownload(dl,doc) {
   })
   .on('progress',function(prog) {
       Fiber(function(){
+        if(downloads[getDocHash(doc)]){
           Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
+        }
       }).run();
   })
   .on('end',function(dl){
     if(dl.error && dl.error !== ''){
-      Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
+      console.log(doc);
+      console.error(dl.error);
+      var hash = getDocHash(doc);
+      console.log(downloads[hash]);
+      //Downloads.update(downloads[hash].docId,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
     } else {
       if(fs.statSync(doc.path).size > 5*1024*1024){
+        if(downloads[getDocHash(doc)]){
         Fiber(function(){Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2}});}).run();
         request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
+        }
       } else {
         if(fs.existsSync(doc.path)){
           fs.unlinkSync(doc.path);
