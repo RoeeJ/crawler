@@ -154,7 +154,7 @@ function processNitroBit(url,passwords,doc){
       }
     }
   }
-  var proxy = Config.proxies[(Math.round(Math.random()*100)) % (proxies.length-1)]
+  var proxy = Config.proxies[(Math.round(Math.random()*100)) % (Config.proxies.length-1)]
   var ret = Async.runSync(function(done){
     var pf;
     var fileid = url.substring(url.lastIndexOf('/')+1);
