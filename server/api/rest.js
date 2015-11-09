@@ -78,7 +78,10 @@ API.addRoute('addTerofLink', {authRequired: false}, {
         });
       });
       if(pf){
-        if(pf === -2){
+        if(pf.statusCode || pf.body || typeof pf === "object"){
+          return pf;
+        }
+        else if(pf === -2){
           return {
             statusCode: 429,
             body: {
@@ -139,6 +142,19 @@ function getContentType(doc) {
 function processNitroBit(url,passwords,doc){
   var password = passwords.pop();
   if(!password) return false;
+  if(!Config.proxies || Config.proxies.length == 0){
+    try{
+      Config.proxies = JSON.parse(request('GET','https://happy-proxy.com/fresh_proxies?key=1c11d40b93cb0259').getBody('UTF8'))
+    }catch(err){
+      return {
+        statusCode: 500,
+        body: {
+          error: "OUT_OF_PROXIES"
+        }
+      }
+    }
+  }
+  var proxy = proxies[(Math.round(Math.random()*100)) % (proxies.length-1)]
   var ret = Async.runSync(function(done){
     var pf;
     var fileid = url.substring(url.lastIndexOf('/')+1);
@@ -146,7 +162,7 @@ function processNitroBit(url,passwords,doc){
   	var Horseman = Meteor.npmRequire('node-horseman');
   	var horseman = Horseman({
   		webSecurity: false,
-      proxy: '120.195.197.165:80',
+      proxy: proxy,
       proxyType: 'html'
   	});
     //http://www.nitrobit.net/ajax/unlock.php?password=$password&file=$fileid&keep=true
