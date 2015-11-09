@@ -17,7 +17,7 @@ Sdarot.on('processURL',function(doc) {
     .headers({
       'X-Requested-With' : 'XMLHttpRequest'
     })
-  	.post('http://sdarot.pm/ajax/watch','watch=false&serie=59&season=1&episode=2')
+  	.post('http://sdarot.pm/ajax/watch','watch=false&serie='+serie+'&season='+season'&episode='+episode)
     .html("body")
     .then(function(html){
 			try{
@@ -45,10 +45,14 @@ Sdarot.on('processURL',function(doc) {
     .post('http://mobile.sdarot.wf/mobile.php?do=searchServer','vid='+firstRun.error.VID)
     .html("body")
     .then(function(html){
-			doc.providerId = Sdarot.id;
-			doc.link = html.replace(/&amp;/g, '&');
-			doc.filename = html.match('.d\\/(.+)\\?')[1];
-			Doom.emit('addDownload',doc);
+			try{
+				doc.providerId = Sdarot.id;
+				doc.link = html.replace(/&amp;/g, '&');
+				doc.filename = html.match('.d\\/(.+)\\?')[1];
+				Doom.emit('addDownload',doc);
+			}catch(lnk){
+				console.log(lnk);
+			}
     })
     .close();
   } else {
