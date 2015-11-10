@@ -17,7 +17,7 @@ Sdarot.on('processURL',function(doc) {
     .headers({
       'X-Requested-With' : 'XMLHttpRequest'
     })
-  	.post('http://sdarot.pm/ajax/watch','watch=false&serie='+serie+'&season='+season'&episode='+episode)
+  	.post('http://sdarot.pm/ajax/watch','watch=false&serie='+serie+'&season='+season+'&episode='+episode)
     .html("body")
     .then(function(html){
 			try{
