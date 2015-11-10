@@ -74,7 +74,7 @@ Router.map(function () {
                   ctype = 'video/quicktime';
                   break;
                 case 'avi':
-                  ctype = 'video/x-msvideo';
+                  ctype = 'video/avi';
                   break;
                 case 'wmv':
                   ctype = 'video/x-ms-wmv';
