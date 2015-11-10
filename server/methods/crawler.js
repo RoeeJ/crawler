@@ -14,7 +14,7 @@ Meteor.methods({
   getDiskUsage: function() {
     try{
       return Async.runSync(function(done) {
-        disk.check('/ext', function(err, info) {
+        disk.check(fs.existsSync('/ext') ? '/ext' '/', function(err, info) {
           if(err) return console.error(err);
           done(null,{
             free:info.free,
