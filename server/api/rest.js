@@ -13,12 +13,18 @@ API.addRoute('getOTL', {}, {
       };
     }
     if(this.bodyParams.terofId) {
+      var clientIP;
+      try{
+        clientIP = this.request.headers['x-forwarded-for'].split(',')[0];
+      } catch(err){
+        clientIP = this.bodyParams.requestingIP || this.request.connection.remoteAddress;
+      }
       var doc = Downloads.findOne({terofId:this.bodyParams.terofId});
       var linkId;
       if(doc){
         linkId = Links.insert({
           terofId: doc.terofId,
-          requestingIP:this.request.headers['X-Forwarded-For'] || this.bodyParams.requestingIP || this.request.connection.remoteAddress,
+          requestingIP:clientIP,
           path:doc.path,
           title: doc.title,
           premium: this.bodyParams.premium || false
