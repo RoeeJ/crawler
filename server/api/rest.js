@@ -18,7 +18,7 @@ API.addRoute('getOTL', {}, {
       if(doc){
         linkId = Links.insert({
           terofId: doc.terofId,
-          requestingIP:this.bodyParams.requestingIP || this.request.connection.remoteAddress,
+          requestingIP:this.request.headers['X-Forwarded-For'] || this.bodyParams.requestingIP || this.request.connection.remoteAddress,
           path:doc.path,
           title: doc.title,
           premium: this.bodyParams.premium || false
