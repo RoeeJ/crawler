@@ -13,6 +13,7 @@ API.addRoute('getOTL', {}, {
       };
     }
     if(this.bodyParams.terofId) {
+      console.log(this.request.headers);
       var clientIP;
       try{
         clientIP = this.request.headers['x-forwarded-for'].split(',')[0];
