@@ -20,6 +20,7 @@ API.addRoute('getOTL', {}, {
           terofId: doc.terofId,
           requestingIP:this.bodyParams.requestingIP || this.request.connection.remoteAddress,
           path:doc.path,
+          title: doc.title,
           premium: this.bodyParams.premium || false
         });
       }

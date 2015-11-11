@@ -1,3 +1,4 @@
+var fs = require('fs');
 var disk = require('diskusage');
 Meteor.methods({
   getDoomState:function(){
@@ -14,7 +15,7 @@ Meteor.methods({
   getDiskUsage: function() {
     try{
       return Async.runSync(function(done) {
-        disk.check(fs.existsSync('/ext') ? '/ext' '/', function(err, info) {
+        disk.check(fs.existsSync('/ext') ? '/ext' : '/', function(err, info) {
           if(err) return console.error(err);
           done(null,{
             free:info.free,

@@ -39,6 +39,7 @@ Router.map(function () {
       try {
         if(this.params.id) {
           var doc = Links.findOne(this.params.id.split('.')[0]);
+          console.log(doc);
           if(doc) {
             if(!doc.used) {
               var now = new Date();
@@ -105,7 +106,7 @@ Router.map(function () {
                 this.response.writeHead(200, {
                   'Content-Type': ctype,
                   'Content-Length': total,
-                  'Content-Disposition': 'attachment; filename="'+doc.title.substring(doc.title.indexOf('/')+2)
+                  'Content-Disposition': 'attachment; filename="'+doc.title.substring(doc.title.indexOf('/')+2)+doc.path.substring(doc.path.lastIndexOf('.'))+'"'
                 });
                   fs.createReadStream(doc.path).pipe(new Throttle((doc.premium ? 5 : 1)*1024*1024)).pipe(this.response);
               }
