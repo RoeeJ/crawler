@@ -32,8 +32,8 @@ _Doom = function() {
     });
 
     this.on('abortDownload',function(id) {
-      Fiber(function(){
-        var doc = downloads[getDocHash(Downloads.findOne(id))];
+      /*Fiber(function(){
+        var doc = downloads[md5(Downloads.findOne(id))];
         if(doc) {
           if(doc.dl) {
             doc.dl.stop();
@@ -48,7 +48,7 @@ _Doom = function() {
           }
           Downloads.remove(id);
         }
-      }).run();
+      }).run();*/
     });
 
     this.on('addDownload', function(doc) {
@@ -59,7 +59,7 @@ _Doom = function() {
         if(!fs.existsSync(Config.BASE_PATH)) {
           fs.mkdirSync(Config.BASE_PATH);
         }
-        var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+        var filepath = Config.BASE_PATH+md5(doc.title)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
         if(fs.existsSync(filepath)) return;
         var dl;
         if(fs.existsSync(filepath+'.mtd')) {
@@ -123,7 +123,7 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 function initDownload(_dl,doc) {
-  var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
+  var filepath = Config.BASE_PATH+md5(doc.title)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
   _dl.on('start',function(dl){
     try {
       Fiber(function(){
@@ -143,7 +143,7 @@ function initDownload(_dl,doc) {
   })
   .on('progress',function(dl) {
       Fiber(function(){
-        if(downloads[getDocHash(doc)]){
+        if(downloads[getash(doc)]){
           Downloads.update(dl.meta._id,{$set:{progress:dl.stats.total.completed,speed:dl.stats.present.speed}});
         }
       }).run();
@@ -167,4 +167,7 @@ function initDownload(_dl,doc) {
     }
   })
   .start();
+}
+function md5(str) {
+  return require('crypto').createHash('md5').update(str).digest('utf8');
 }
