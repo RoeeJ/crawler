@@ -122,34 +122,29 @@ function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
-function getDocHash(doc) {
-  return require('crypto').createHash('md5').update(doc.olink || doc.link || doc.title).digest('hex').substring(0,31);
-}
-function initDownload(dl,doc) {
+function initDownload(_dl,doc) {
   var filepath = Config.BASE_PATH+getDocHash(doc)+doc.filename.match(new RegExp('\\.[0-9a-z]+$','i'))[0];
-  dl.on('start',function(dl){
+  _dl.on('start',function(dl){
     try {
       Fiber(function(){
-        var hash = getDocHash(doc);
-        downloads[hash] = doc;
-        downloads[hash].state = 1;
-        downloads[hash].path = filepath;
-        downloads[hash].docId = doc._id || Downloads.insert(doc);
-        downloads[hash].dl = dl;
+        doc.state = 1;
+        doc.path = filepath;
+        doc._id = doc._id || Downloads.insert(doc);
+        dl.setMeta(doc);
         }).run();
-    }catch(err){}
+    } catch(err){
+
+    }
   })
-  .on('error',function(err){
-    console.log(err);
+  .on('error',function(dl){
       Fiber(function(){
-          //Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:-1, error:err}});
+          Downloads.update(dl.meta._id,{$set:{state:dl.status, error:dl.error}});
       }).run();
-      //Downloads.update(dl.meta.docId,{$set:{state:-1,error:err}});
   })
-  .on('progress',function(prog) {
+  .on('progress',function(dl) {
       Fiber(function(){
         if(downloads[getDocHash(doc)]){
-          Downloads.update(downloads[getDocHash(doc)].docId,{$set:{progress:prog,speed:dl.stats.present.speed}});
+          Downloads.update(dl.meta._id,{$set:{progress:dl.stats.total.completed,speed:dl.stats.present.speed}});
         }
       }).run();
   })
@@ -157,21 +152,17 @@ function initDownload(dl,doc) {
     if(dl.error && dl.error !== ''){
       console.log(doc);
       console.error(dl.error);
-      var hash = getDocHash(doc);
-      console.log(downloads[hash]);
-      //Downloads.update(downloads[hash].docId,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
+      Downloads.update(dl.meta._id,{$set:{state:dl.status},$unset:{progress:'',speed:''}});
     } else {
-      if(fs.statSync(doc.path).size > 5*1024*1024){
-        if(downloads[getDocHash(doc)]){
-        Fiber(function(){Downloads.update(downloads[getDocHash(doc)].docId,{$set:{state:2}});}).run();
+      var path = dl.meta.path;
+      if(fs.statSync(path).size > 5*1024*1024){
+        Fiber(function(){dl.meta._id,{$set:{state:2}});}).run();
         request('GET','http://terof.net/api/vedix_callback/'+doc.terofId);
-        }
       } else {
-        if(fs.existsSync(doc.path)){
-          fs.unlinkSync(doc.path);
+        if(fs.existsSync(path)){
+          fs.unlinkSync(path);
         }
-        downloads[getDocHash(doc)] = undefined;
-        Fiber(function(){Downloads.remove(doc._id);}).run();
+        Fiber(function(){Downloads.remove(dl.meta._id);}).run();
       }
     }
   })
