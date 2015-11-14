@@ -1,67 +1,54 @@
+var url = Npm.require('url');
 var util = Npm.require('util');
 var Horseman = Meteor.npmRequire('node-horseman');
+
 var Sdarot = new _Doom();
 var self = Sdarot;
-Sdarot.on('processURL',function(doc) {
-	var url = doc.link;
-  var _temp = url.match(new RegExp('\/(\\d)','g')).map(function(n){return n.substring(1);});
-  var serie = _temp[0];
-  var season = _temp[1];
-  var episode = _temp[2];
+
+Sdarot.on('processURL', function(doc) {
+
+	var endpoint = 'sdarot.pm';
+
 	var horseman = Horseman({
 		webSecurity: false
 	});
-  var firstRun = Async.runSync(function(done){
-    horseman
-    .userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56')
-    .headers({
-      'X-Requested-With' : 'XMLHttpRequest'
-    })
-  	.post('http://sdarot.pm/ajax/watch','watch=false&serie='+serie+'&season='+season+'&episode='+episode)
-    .html("body")
-    .then(function(html){
-			try{
-				var md = JSON.parse(html);
-	      if(md.watch && md.watch.url){
-	        done(null,md);
-	      } else {
-	        done(md,null);
-	      }
-			}catch(_err) {
-				console.error(html);
-			}
-    })
-  	.close();
-  });
-  if(!firstRun.result) {
-    var _horseman = Horseman({
-  		webSecurity: false
-  	});
-    _horseman
-    .userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16')
-		.headers({
-      'X-Requested-With' : 'XMLHttpRequest'
-    })
-    .post('http://mobile.sdarot.wf/mobile.php?do=searchServer','vid='+firstRun.error.VID)
-    .html("body")
-    .then(function(html){
-			try{
-				doc.providerId = Sdarot.id;
-				doc.link = html.replace(/&amp;/g, '&');
-				doc.filename = html.match('.d\\/(.+)\\?')[1];
-				Doom.emit('addDownload',doc);
-			}catch(lnk){
-				console.log(lnk);
-			}
-    })
-    .close();
-  } else {
 
-  }
+	horseman
+		.userAgent('Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36')
+		.cookies({
+			name:	'remember',
+			value:	'a%3A2%3A%7Bs%3A8%3A%22username%22%3Bs%3A10%3A%22oshers1994%22%3Bs%3A5%3A%22check%22%3Bs%3A32%3A%22d25dceb3cf7dbc463fa126772013504a%22%3B%7D',
+			domain:	'.' + endpoint
+		})
+		.open('http://' + endpoint + url.parse(doc.link).pathname)
+		.waitForSelector('#loading')
+		.evaluate(function() {
+		
+			$(function(){
+				console.log(download);
+			});
+			
+			console.log(download);
+
+			return {
+				url: download.pop(),
+				id:  VID
+			};
+		})
+		.then(function(video){
+			doc.providerId	= Sdarot.id;
+			doc.link		= video.url;
+			doc.filename	= 'sdarot_' + video.id + '.mp4';
+			Doom.emit('addDownload', doc);
+		})
+		.close();
 });
+
 Sdarot.matcher = function(url) {
 		console.log(url);
     return url.toLowerCase().indexOf('sdarot') > -1;
 };
+
 Sdarot.id = 'Sdarot';
+
 Doom.emit('addProvider', Sdarot);
