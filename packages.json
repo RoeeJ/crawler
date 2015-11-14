@@ -3,5 +3,6 @@
   "sync-request":"2.1.0",
   "mt-files-downloader": "https://github.com/nrol39/node-mt-files-downloader/archive/363a1f81c59656d019ec6dcf1b4067e63b498ab0.tar.gz",
   "throttle":"1.0.3",
-  "diskusage":"0.1.3"
+  "diskusage":"0.1.3",
+  "node-persist":"0.0.8"
 }

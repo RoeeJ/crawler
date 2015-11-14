@@ -55,6 +55,10 @@ _Doom = function() {
           Fiber(function(){
             Downloads.remove(doc._id);
           }).run();
+        } finally {
+          Fiber(function(){
+            Downloads.remove(doc._id);
+          }).run();
         }
       }).run();
     });

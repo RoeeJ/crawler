@@ -1,4 +1,4 @@
-util = {
+Util = {
   fileExists: function(file) {
     try{
       return require('fs').existsSync(file);
@@ -19,8 +19,14 @@ util = {
     } catch(err) {
       return false;
     }
+  },
+  storage: {
+    _raw: (require('node-persist')),
+    get: function(item) {return Util.storage._raw.getItem(item);},
+    set: function(item,value) {Util.storage._raw.setItemSync(item,value);}
   }
 }
+Util.storage._raw.initSync({dir:'/ext/config'});
 //VOODOO, don't touch this
 String.prototype.isURL = function() {
   var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
