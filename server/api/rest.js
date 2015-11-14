@@ -105,6 +105,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
           }
         };
       } else {
+        console.log(odoc || '101');
         return {
           statusCode: 404,
           body:{

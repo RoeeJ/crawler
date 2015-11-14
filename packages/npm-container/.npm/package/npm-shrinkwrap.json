@@ -73,7 +73,7 @@
       }
     },
     "mt-files-downloader": {
-      "version": "https://github.com/nrol39/node-mt-files-downloader/archive/4fb9f482b7b6cecf81d6f988dc0d94a6f2f0368e.tar.gz",
+      "version": "https://github.com/nrol39/node-mt-files-downloader/archive/363a1f81c59656d019ec6dcf1b4067e63b498ab0.tar.gz",
       "dependencies": {
         "moment": {
           "version": "2.10.6"
@@ -117,7 +117,7 @@
           }
         },
         "node-phantom-simple": {
-          "version": "2.1.0"
+          "version": "2.1.1"
         }
       }
     },

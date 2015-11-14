@@ -1,7 +1,7 @@
 {
   "node-horseman":"2.7.1",
   "sync-request":"2.1.0",
-  "mt-files-downloader": "https://github.com/nrol39/node-mt-files-downloader/archive/4fb9f482b7b6cecf81d6f988dc0d94a6f2f0368e.tar.gz",
+  "mt-files-downloader": "https://github.com/nrol39/node-mt-files-downloader/archive/363a1f81c59656d019ec6dcf1b4067e63b498ab0.tar.gz",
   "throttle":"1.0.3",
   "diskusage":"0.1.3"
 }

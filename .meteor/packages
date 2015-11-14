@@ -54,8 +54,10 @@ nimble:restivus
 
 
 valedaemon:circular-progress
+
+
+alethes:pages
 meteorhacks:npm
 
 
 npm-container
-alethes:pages

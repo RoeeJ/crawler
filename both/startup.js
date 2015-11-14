@@ -1,5 +1,5 @@
 Meteor.startup(function(){
-  Accounts.config({
+  /*Accounts.config({
     forbidClientAccountCreation: true
-  });
+  });*/
 });
