@@ -1,5 +1,5 @@
-var url = Npm.require('url');
-var util = Npm.require('util');
+var url = require('url');
+var util = require('util');
 var Horseman = require('node-horseman');
 
 var Sdarot = new _Doom();

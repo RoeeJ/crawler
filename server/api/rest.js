@@ -4,7 +4,8 @@ API = new Restivus({
 });
 API.addRoute('getOTL', {}, {
   post: function() {
-    if(this.request.headers.host === 'doom.slyke.net') {
+    var self = this;
+    if(self.request.headers.host.toLowerCase().indexOf('doom') > -1) {
       return {
         statusCode: 406,
         body: {
@@ -12,15 +13,14 @@ API.addRoute('getOTL', {}, {
         }
       };
     }
-    if(this.bodyParams.terofId) {
-      console.log(this.request.headers);
+    if(self.bodyParams.terofId) {
       var clientIP;
       try{
-        clientIP = this.request.headers['x-forwarded-for'].split(',')[0];
+        clientIP = self.request.headers['x-forwarded-for'].split(',')[0];
       } catch(err){
-        clientIP = this.bodyParams.requestingIP || this.request.connection.remoteAddress;
+        clientIP = self.bodyParams.requestingIP || self.request.connection.remoteAddress;
       }
-      var doc = Downloads.findOne({terofId:this.bodyParams.terofId});
+      var doc = Downloads.findOne({terofId:self.bodyParams.terofId});
       var linkId;
       if(doc){
         linkId = Links.insert({
@@ -28,7 +28,7 @@ API.addRoute('getOTL', {}, {
           requestingIP:clientIP,
           path:doc.path,
           title: doc.title,
-          premium: this.bodyParams.premium || false
+          premium: self.bodyParams.premium || false
         });
       }
       return {
@@ -52,8 +52,9 @@ API.addRoute('getOTL', {}, {
 });
 API.addRoute('addTerofLink', {authRequired: false}, {
   post: function() {
-    if(this.bodyParams.id) {
-      if(Downloads.findOne({terofId : this.bodyParams.id})) {
+    var self = this;
+    if(self.bodyParams.id) {
+      if(Downloads.findOne({terofId : self.bodyParams.id})) {
         return {
           statusCode : 409,
           body : {
@@ -61,7 +62,7 @@ API.addRoute('addTerofLink', {authRequired: false}, {
           }
         };
       }
-      var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+this.bodyParams.id).getBody('utf8'));
+      var odoc = JSON.parse(request('GET','http://terof.net/api/video/'+self.bodyParams.id).getBody('utf8'));
       var ranking = ['nitro','sdarot'];
       var pf;
       var doc;
@@ -77,7 +78,6 @@ API.addRoute('addTerofLink', {authRequired: false}, {
           doc.about = odoc.about;
           doc.link = link.url;
           doc.olink = link.url;
-          //45324
           if(link.url.indexOf('nitrobit') > -1){
             pf = processNitroBit(link.url,['NB1782AJKP95'],doc) ? -1 : -2;
           } else {

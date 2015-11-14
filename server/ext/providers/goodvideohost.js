@@ -1,4 +1,4 @@
-var util = Npm.require('util');
+var util = require('util');
 var Horseman = require('node-horseman');
 var GoodVideoHost = new _Doom();
 var self = GoodVideoHost;

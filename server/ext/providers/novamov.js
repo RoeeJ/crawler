@@ -1,5 +1,5 @@
 
-var util = Npm.require('util');
+var util = require('util');
 var Horseman = require('node-horseman');
 var request = require('sync-request');
 var MultiLazy = new _Doom();

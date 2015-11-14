@@ -12,6 +12,13 @@ util = {
     } catch(err) {
       return false;
     }
+  },
+  statSync: function(file) {
+    try{
+      return require('fs').statSync(file);
+    } catch(err) {
+      return false;
+    }
   }
 }
 //VOODOO, don't touch this
