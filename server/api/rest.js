@@ -1,4 +1,4 @@
-var request = Meteor.npmRequire('sync-request');
+var request = require('sync-request');
 API = new Restivus({
   prettyJson: true
 });
@@ -167,7 +167,7 @@ function processNitroBit(url,passwords,doc){
     var pf;
     var fileid = url.substring(url.lastIndexOf('/')+1);
     //http://www.nitrobit.net/watch/aq7nt22Q4
-  	var Horseman = Meteor.npmRequire('node-horseman');
+  	var Horseman = require('node-horseman');
   	var horseman = Horseman({
   		webSecurity: false,
       proxy: proxy,

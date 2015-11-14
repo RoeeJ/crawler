@@ -1,6 +1,6 @@
 var url = Npm.require('url');
 var util = Npm.require('util');
-var Horseman = Meteor.npmRequire('node-horseman');
+var Horseman = require('node-horseman');
 
 var Sdarot = new _Doom();
 var self = Sdarot;
@@ -23,11 +23,11 @@ Sdarot.on('processURL', function(doc) {
 		.open('http://' + endpoint + url.parse(doc.link).pathname)
 		.waitForSelector('#loading')
 		.evaluate(function() {
-		
+
 			$(function(){
 				console.log(download);
 			});
-			
+
 			console.log(download);
 
 			return {

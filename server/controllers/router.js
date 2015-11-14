@@ -1,4 +1,4 @@
-var Horseman = Meteor.npmRequire('node-horseman');
+var Horseman = require('node-horseman');
 Router.map(function () {
   this.route('proxy', {
     path: '/proxy/:url',

@@ -1,5 +1,5 @@
 var util = Npm.require('util');
-var Horseman = Meteor.npmRequire('node-horseman');
+var Horseman = require('node-horseman');
 var VidToMe = new _Doom();
 var self = VidToMe;
 VidToMe.on('processURL',function(doc) {

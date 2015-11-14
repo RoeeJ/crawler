@@ -1,4 +1,20 @@
-//VOODOO, don't touch
+util = {
+  fileExists: function(file) {
+    try{
+      return require('fs').existsSync(file);
+    } catch(err) {
+      return false;
+    }
+  },
+  unlinkSync: function(file) {
+    try{
+      return require('fs').unlinkSync(file);
+    } catch(err) {
+      return false;
+    }
+  }
+}
+//VOODOO, don't touch this
 String.prototype.isURL = function() {
   var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name

@@ -1,7 +1,7 @@
 
 var util = Npm.require('util');
-var Horseman = Meteor.npmRequire('node-horseman');
-var request = Meteor.npmRequire('sync-request');
+var Horseman = require('node-horseman');
+var request = require('sync-request');
 var MultiLazy = new _Doom();
 var self = MultiLazy;
 MultiLazy.on('processURL',function(doc) {

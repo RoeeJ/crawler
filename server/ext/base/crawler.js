@@ -32,23 +32,23 @@ _Doom = function() {
     });
 
     this.on('abortDownload',function(id) {
-      /*Fiber(function(){
-        var doc = downloads[md5(Downloads.findOne(id))];
-        if(doc) {
-          if(doc.dl) {
-            doc.dl.stop();
+      downloads.filter(function(idx){
+        return idx.meta._id==id;
+      }).forEach(function(idx){
+        var doc = idx.meta;
+        if(doc){
+          idx.destroy();
+          if(util.fileExists(doc.path)){
+            util.unlinkSync(doc.path);
           }
-          if(doc.path) {
-          		if(fs.existsSync(doc.path)){
-          			fs.unlinkSync(doc.path);
-          		}
-          		if(fs.existsSync(doc.path+'.mtd')){
-          			fs.unlinkSync(doc.path+'.mtd');
-          		}
+          if(util.fileExists(doc.path+'.mtd')){
+            util.unlinkSync(doc.path+'.mtd')
           }
-          Downloads.remove(id);
+          Fiber(function(){
+            Downloads.remove(doc._id);
+          }).run();
         }
-      }).run();*/
+      });
     });
 
     this.on('addDownload', function(doc) {

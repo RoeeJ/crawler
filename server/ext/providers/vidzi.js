@@ -1,5 +1,5 @@
 var util = Npm.require('util');
-var Horseman = Meteor.npmRequire('node-horseman');
+var Horseman = require('node-horseman');
 var Vidzi = new _Doom();
 var self = Vidzi;
 Vidzi.on('processURL',function(doc) {
